@@ -13,22 +13,26 @@ import RestaurantLocation from "./RestaurantLocation";
 import CustomerReviews from "./CustomerReviews";
 import CommonRestaurant from "./CommonRestaurant";
 import Footer from "./Footer";
-import { API } from "../../api/endpoints";
-import { useParams } from "react-router-dom";
+import { API, BASE_URL } from "../../api/endpoints";
+import { useNavigate, useParams } from "react-router-dom";
 
 const RestaurantDetail = () => {
   const { id } = useParams();
-  console.log("Restaurant ID:", id);
+  const navigate = useNavigate();
+
   const [restaurant, setRestaurant] = useState(null);
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState({
+    restaurants: [],
+    categories: [],
+    menu_items: [],
+  });
 
   useEffect(() => {
     fetch(API.RESTAURANT_DETAIL(id))
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        // console.log("Restaurant Data:", data.data);
-        // console.log("Menu Items:", data.data.menu_items);
-
         setRestaurant(data.data);
       })
       .catch((err) => console.log(err));
@@ -36,6 +40,43 @@ const RestaurantDetail = () => {
   if (!restaurant) {
     return <h1>Loading...</h1>;
   }
+
+  const handleSearch = async (value) => {
+    setSearch(value);
+
+    if (!value.trim()) {
+      setResults({
+        restaurants: [],
+        categories: [],
+        menu_items: [],
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API.SEARCH}?q=${encodeURIComponent(value)}`
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setResults({
+          restaurants: data.data?.restaurants || [],
+          categories: data.data?.categories || [],
+          menu_items: data.data?.menu_items || [],
+        });
+      } else {
+        setResults({
+          restaurants: [],
+          categories: [],
+          menu_items: [],
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <>
       <TopBar />
@@ -56,7 +97,7 @@ const RestaurantDetail = () => {
 
           <div className="absolute left-10 top-24 text-white z-10">
             <p className="text-lg mb-3">{restaurant.description}</p>
-            
+
             <h1 className="text-6xl font-semibold mb-8">{restaurant.name}</h1>
             <p className="text-lg mb-3">{restaurant.address}</p>
 
@@ -105,12 +146,154 @@ const RestaurantDetail = () => {
             All Offers from {restaurant.name}
           </h2>
 
-          <div className="border border-gray-400 rounded-full px-6 py-3 w-[330px]">
+          <div className="relative w-[330px]">
             <input
               type="text"
-              placeholder="🔍 Search from menu..."
-              className="outline-none w-full"
+              value={search}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="🔍 Search Restaurant, Category or Menu..."
+              className="border border-gray-400 rounded-full px-6 py-3 w-full outline-none"
             />
+            {search &&
+              results.restaurants.length === 0 &&
+              results.categories.length === 0 &&
+              results.menu_items.length === 0 && (
+                <div className="absolute top-14 left-0 w-full bg-white shadow-lg rounded-xl p-4 text-center text-gray-500 z-50">
+                  No Results Found
+                </div>
+              )}
+
+            {(results.restaurants.length > 0 ||
+              results.categories.length > 0 ||
+              results.menu_items.length > 0) && (
+              <div className="absolute top-14 left-0 w-full bg-white rounded-xl shadow-xl border z-50 max-h-96 overflow-y-auto">
+                {/* Restaurants */}
+
+                {results.restaurants.length > 0 && (
+                  <>
+                    <div className="bg-orange-100 px-4 py-2 font-bold text-[#FC8A06]">
+                      Restaurants
+                    </div>
+
+                    {results.restaurants.map((restaurant) => (
+                      <div
+                        key={restaurant.id}
+                        onClick={() => {
+                          navigate(`/restaurants/${restaurant.id}`);
+
+                          setSearch("");
+
+                          setResults({
+                            restaurants: [],
+                            categories: [],
+                            menu_items: [],
+                          });
+                        }}
+                        className="flex items-center gap-3 p-3 border-b hover:bg-gray-100 cursor-pointer"
+                      >
+                        <img
+                          src={`${BASE_URL}${restaurant.image}`}
+                          alt={restaurant.name}
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
+
+                        <div>
+                          <h3 className="font-semibold">{restaurant.name}</h3>
+
+                          <p className="text-sm text-gray-500">
+                            {restaurant.menu_items?.length || 0} Menu Items
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                {/* Categories */}
+
+                {results.categories.length > 0 && (
+                  <>
+                    <div className="bg-orange-100 px-4 py-2 font-bold text-[#FC8A06]">
+                      Categories
+                    </div>
+
+                    {results.categories.map((category) => (
+                      <div
+                        key={category.id}
+                        onClick={() => {
+                          navigate(`/restaurants/category/${category.id}`);
+
+                          setSearch("");
+
+                          setResults({
+                            restaurants: [],
+                            categories: [],
+                            menu_items: [],
+                          });
+                        }}
+                        className="p-3 border-b hover:bg-gray-100 cursor-pointer"
+                      >
+                        <h3 className="font-semibold">📂 {category.name}</h3>
+
+                        <p className="text-sm text-gray-500">
+                          {category.restaurants?.length || 0} Restaurants
+                        </p>
+                      </div>
+                    ))}
+                  </>
+                )}
+
+                {/* Menu */}
+
+                {results.menu_items.length > 0 && (
+                  <>
+                    <div className="bg-orange-100 px-4 py-2 font-bold text-[#FC8A06]">
+                      Menu Items
+                    </div>
+
+                    {results.menu_items.map((item) => (
+                      <div
+                        key={item.id}
+                        onClick={() => {
+                          navigate(`/restaurants/${item.restaurant.id}`);
+
+                          setSearch("");
+
+                          setResults({
+                            restaurants: [],
+                            categories: [],
+                            menu_items: [],
+                          });
+                        }}
+                        className="flex gap-3 p-3 border-b hover:bg-gray-100 cursor-pointer"
+                      >
+                        <img
+                          src={`${BASE_URL}${item.image}`}
+                          alt={item.name}
+                          className="w-14 h-14 rounded-lg object-cover"
+                        />
+
+                        <div>
+                          <h3 className="font-semibold">{item.name}</h3>
+
+                          <p className="text-sm text-gray-500">
+                            Restaurant : {item.restaurant.name}
+                          </p>
+
+                          <p className="text-sm text-gray-500">
+                            Category : {item.category?.name}
+                          </p>
+
+                          <p className="font-bold text-[#FC8A06]">
+                            £ {item.price}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

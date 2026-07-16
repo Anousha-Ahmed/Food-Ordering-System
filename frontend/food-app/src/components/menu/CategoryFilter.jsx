@@ -1,19 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
 
-const CategoryFilter = () => {
-  const [active, setActive] = useState("Burgers");
+const CategoryFilter = ({
+  categories,
+  activeCategory,
+  setActiveCategory,
+}) => {
   const [open, setOpen] = useState(false);
-
   const dropdownRef = useRef(null);
-
-  const categories = [
-    "Burgers",
-    "Pizza",
-    "Fries",
-    "Drinks",
-    "Desserts"
-  ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,9 +21,8 @@ const CategoryFilter = () => {
 
     document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
+    return () =>
       document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
 
   return (
@@ -39,11 +32,11 @@ const CategoryFilter = () => {
         {categories.map((item) => (
           <button
             key={item}
-            onClick={() => setActive(item)}
-            className={`px-7 py-3 rounded-full text-[15px] font-semibold transition-all duration-300 mt-10 ${
-              active === item
+            onClick={() => setActiveCategory(item)}
+            className={`px-7 py-3 rounded-full font-semibold transition ${
+              activeCategory === item
                 ? "border-2 border-[#FC8A06] text-[#FC8A06]"
-                : "text-[#03081F] hover:text-[#FC8A06]"
+                : "text-[#03081F]"
             }`}
           >
             {item}
@@ -51,46 +44,36 @@ const CategoryFilter = () => {
         ))}
       </div>
 
-      {/* Mobile & Tablet */}
-      <div
-        ref={dropdownRef}
-        className="relative lg:hidden z-[999]"
-      >
+      {/* Mobile */}
+      <div ref={dropdownRef} className="relative lg:hidden">
         <button
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-2 border border-gray-300 rounded-full px-4 py-2 bg-white shadow-sm"
+          className="flex items-center gap-2 border rounded-full px-4 py-2 bg-white"
         >
-          <span className="text-sm font-medium">
-            {active}
-          </span>
-
+          <span>{activeCategory}</span>
           <FaChevronDown
-            className={`transition-transform duration-300 ${
-              open ? "rotate-180" : ""
-            }`}
+            className={`${open ? "rotate-180" : ""} transition`}
           />
         </button>
 
         {open && (
-          <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden z-[9999]">
-
+          <div className="absolute right-0 mt-2 bg-white rounded-xl shadow-lg w-52">
             {categories.map((item) => (
               <button
                 key={item}
                 onClick={() => {
-                  setActive(item);
+                  setActiveCategory(item);
                   setOpen(false);
                 }}
-                className={`block w-full text-left px-5 py-3 transition hover:bg-orange-50 ${
-                  active === item
+                className={`block w-full text-left px-5 py-3 hover:bg-orange-50 ${
+                  activeCategory === item
                     ? "text-[#FC8A06] font-semibold"
-                    : "text-[#03081F]"
+                    : ""
                 }`}
               >
                 {item}
               </button>
             ))}
-
           </div>
         )}
       </div>

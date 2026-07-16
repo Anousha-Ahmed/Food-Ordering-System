@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TopBar from "../../components/layout/Topbar";
 import Navbar from "../../components/layout/Navbar";
 import Footer from "../../components/layout/Footer";
@@ -8,17 +8,14 @@ import { toast } from "react-toastify";
 // import { useDispatch } from "react-redux";
 // import { addToCart } from "../../redux/slices/cartSlice";
 
-import {
-  FaStar,
-  FaStarHalfAlt,
-  FaPlus,
-  FaMinus,
-} from "react-icons/fa";
+
+import { FaStar, FaStarHalfAlt, FaPlus, FaMinus } from "react-icons/fa";
 
 import { MdDeliveryDining } from "react-icons/md";
 
 const DealDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   // const dispatch = useDispatch();
 
   const [deal, setDeal] = useState(null);
@@ -28,21 +25,19 @@ const DealDetail = () => {
 
   useEffect(() => {
     fetch(API.DEAL_DETAIL(id))
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setDeal(data.data);
-  
+
         if (data.data.items.length > 0) {
-          setSelectedImage(
-            `${BASE_URL}${data.data.items[0].menu_item.image}`
-          );
+          setSelectedImage(`${BASE_URL}${data.data.items[0].menu_item.image}`);
         }
       });
   }, [id]);
   useEffect(() => {
     fetch(API.ALL_DEAL)
-      .then(res => res.json())
-      .then(data => setAllDeals(data.data || []));
+      .then((res) => res.json())
+      .then((data) => setAllDeals(data.data || []));
   }, []);
 
   if (!deal)
@@ -52,14 +47,13 @@ const DealDetail = () => {
 
   const handleAddDeal = async () => {
     const token = localStorage.getItem("accessToken");
-  
+
     if (!token) {
       toast.error("Please login first");
       return;
     }
-  
+
     try {
-      // ✅ FIX: Add the deal as a single item, not individual menu items
       const response = await fetch(API.CART_ADD, {
         method: "POST",
         headers: {
@@ -67,20 +61,19 @@ const DealDetail = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          deal_id: deal.id,  // ← Send deal_id instead of menu_item_id
+          deal_id: deal.id, 
           quantity: qty,
         }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         toast.success("Deal Added Successfully");
         // Optional: Navigate to cart or stay
       } else {
         toast.error(data.error || "Unable to add deal");
       }
-  
     } catch (err) {
       console.log(err);
       toast.error("Server Error");
@@ -188,14 +181,12 @@ const DealDetail = () => {
                 </button>
               </div>
 
-              <button 
-              className="bg-[#FC8A06] text-white px-12 py-4 rounded-xl font-bold hover:bg-orange-600"
-              onClick={handleAddDeal}
+              <button
+                className="bg-[#FC8A06] text-white px-12 py-4 rounded-xl font-bold hover:bg-orange-600"
+                onClick={handleAddDeal}
               >
                 Add To Cart
               </button>
-
-              
             </div>
           </div>
         </div>
@@ -256,7 +247,10 @@ const DealDetail = () => {
             </div>
           </div>
 
-          <button className="bg-[#FC8A06] text-white px-8 py-4 rounded-xl font-bold">
+          <button 
+            className="bg-[#FC8A06] text-white px-8 py-4 rounded-xl font-bold"
+            onClick={() => navigate(`/restaurants/${deal.items[0]?.menu_item.restaurant?.id}`)}
+          >
             View Restaurant
           </button>
         </div>
@@ -276,7 +270,7 @@ const DealDetail = () => {
               <div
                 key={item.id}
                 className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl duration-300 cursor-pointer"
-                onClick={() => (window.location.href = `/offers/${item.id}`)}
+                onClick={() => navigate(`/offers/${item.id}`)}
               >
                 <div className="relative">
                   <img

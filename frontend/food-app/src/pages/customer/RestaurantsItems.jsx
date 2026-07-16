@@ -126,14 +126,19 @@ const RestaurantsItems = () => {
           <img src={Review} alt="" className="h-[120px]" />
         </div>
       </div>
+      <div className="flex justify-between items-center  max-w-7xl mx-auto mt-[70px]">
+          <h2 className="text-4xl font-bold">
+            All Offers from Restaurants
+          </h2>
+        </div>
 
       {/* Categories */}
-      <div className="bg-[#F3F3F3] mt-[80px] flex flex-wrap justify-center gap-[100px] py-5 px-6">
+      <div className="bg-[#F3F3F3] mt-[80px] flex flex-wrap justify-center gap-[70px] py-5 px-5">
         {categories.map((category, index) => (
           <button
             key={index}
             onClick={() => setActiveCategory(category)}
-            className={`px-[30px] py-3  rounded-full font-semibold transition ${
+            className={`px-[30px] py-3 rounded-full font-semibold transition ${
               activeCategory === category
                 ? "bg-[#03081F] text-white"
                 : "bg-white text-black"
@@ -152,11 +157,7 @@ const RestaurantsItems = () => {
 
         <div className="grid grid-cols-3 gap-6">
           {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => navigate(`/menu/${item.id}`)}
-              className="cursor-pointer"
-            >
+            <div key={item.id}>
               <MenuCard
                 name={item.name}
                 description={item.description}

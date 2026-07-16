@@ -23,7 +23,7 @@ const HomeSectionList = () => {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 lg:px-0 py-12 mt-[30px]">
+    <section className="max-w-7xl mx-auto px-4 lg:px-0 py-12 mt-[50px]">
       <h2 className="text-2xl md:text-3xl lg:text-[32px] font-bold mb-8">
         Order.uk Popular Categories 🤩
       </h2>

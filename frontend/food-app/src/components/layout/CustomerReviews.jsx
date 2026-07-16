@@ -163,7 +163,7 @@ const CustomerReviews = () => {
 
               {/* Review */}
 
-              <p className="mt-8 text-[15px] leading-8 text-[#3B3B3B]">
+              <p className="mt-5 text-[15px] leading-8 text-[#3B3B3B]">
                 {item.review}
               </p>
 
@@ -180,7 +180,7 @@ const CustomerReviews = () => {
           <img
             src={Review}
             alt=""
-            className="w-[130px] h-[150px] rounded-md"
+            className="w-[130px] h-[140px] rounded-md"
           />
 
         </div>

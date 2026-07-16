@@ -18,7 +18,7 @@ const CommonRestaurant = () => {
   }, []);
 
   return (
-    <section className="max-w-7xl mx-auto px-8 lg:px-0 py-8 mb-10">
+    <section className="max-w-7xl mx-auto px-8 lg:px-0 py-8 mt-[20px]">
       <h2 className="text-[32px] font-bold mb-8">All Restaurants</h2>
 
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-5">

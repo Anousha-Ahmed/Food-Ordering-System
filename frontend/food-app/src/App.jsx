@@ -38,7 +38,6 @@ const App = () => {
         <Route path="/restaurants/:id" element={<RestaurantDetail />} />
         <Route path="/offers" element={<SpecialOffer />} />
         <Route path="/offers/:id" element={<DealDetail />} />
-        {/* <Route path="/menuitem/:id" element={<MenuItemDetail />} /> */}
 
         {/* protected route */}
         <Route element={<CustomerProtectedRoute/>}>
