@@ -93,10 +93,12 @@ class Order(models.Model):
     
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    menu_item =  models.ForeignKey(MenuItem, on_delete=models.SET_NULL, null=True, blank=True)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL, null=True, blank=True)
     deal = models.ForeignKey(Deal, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=1)
     price_at_order = models.DecimalField(max_digits=10, decimal_places=2)
+    item_name = models.CharField(max_length=255, blank=True, null=True) 
+    item_image = models.CharField(max_length=500, blank=True, null=True)  
 
     def clean(self):
         if not self.menu_item and not self.deal:
@@ -107,8 +109,13 @@ class OrderItem(models.Model):
         return self.price_at_order * self.quantity
 
     def __str__(self):
-        item = self.menu_item.name if self.menu_item else self.deal.name
-        return f"{self.quantity} x {item}"
+        if self.item_name:
+            return f"{self.quantity} x {self.item_name}"
+        if self.menu_item_id:
+            return f"{self.quantity} x {self.menu_item.name}"
+        if self.deal_id:
+            return f"{self.quantity} x {self.deal.name}"
+        return f"{self.quantity} x Unknown Item"
 
 class OrderStatusHistory(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='status_history')

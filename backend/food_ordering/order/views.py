@@ -233,7 +233,17 @@ class CheckoutView(APIView):
                             menu_item=item.menu_item if item.menu_item else None,
                             deal=item.deal if item.deal else None,
                             quantity=item.quantity,
-                            price_at_order=item.menu_item.price if item.menu_item else item.deal.combo_price
+                            price_at_order=item.menu_item.price if item.menu_item else item.deal.combo_price,
+
+                            item_name=item.menu_item.name if item.menu_item else item.deal.name,
+
+                            item_image=(
+                                item.menu_item.image.url
+                                if item.menu_item and item.menu_item.image
+                                else item.deal.image.url
+                                if item.deal and item.deal.image
+                                else ""
+                            )
                         )
 
                     # Create initial status history

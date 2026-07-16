@@ -82,6 +82,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
     #     return obj.deal.combo_price if obj.deal else None
 
     def get_image(self, obj):
+        if obj.item_image:
+            return obj.item_image
+
         item = obj.menu_item or obj.deal
         return item.image.url if item and item.image else None
 
