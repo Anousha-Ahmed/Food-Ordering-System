@@ -4,22 +4,11 @@ import { MdCheckCircle } from "react-icons/md";
 
 import TopBar from "../../components/layout/Topbar";
 import Navbar from "../../components/layout/Navbar";
-
-// import { useSelector, useDispatch } from "react-redux";
-// import {
-//   increaseQuantity,
-//   decreaseQuantity,
-//   removeFromCart,
-// } from "../../redux/slices/cartSlice";
-
 import { toast } from "react-toastify";
 import Footer from "../../components/layout/Footer";
 import { API, BASE_URL } from "../../api/endpoints";
 
 const Checkout = () => {
-  // const dispatch = useDispatch();
-
-  // const cartItems = useSelector((state) => state.cart.cartItems);
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [cartItems, setCartItems] = useState([]);
 
@@ -27,7 +16,6 @@ const Checkout = () => {
     loadCart();
   }, []);
 
-  // In Checkout.jsx - loadCart function
   const loadCart = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -38,7 +26,6 @@ const Checkout = () => {
       });
       const data = await response.json();
 
-      // ✅ Debug logs
       console.log("=== CART API RESPONSE ===");
       console.log("Full response:", data);
       console.log("Cart items:", data.data?.items);
@@ -169,34 +156,41 @@ const Checkout = () => {
       toast.error("Server Error");
     }
   };
+
   return (
     <>
       <TopBar />
       <Navbar />
 
-      <section className="min-h-screen py-10">
+      <section className="min-h-screen bg-gray-100 py-6 sm:py-8 md:py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8">Group Order Checkout</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 text-center sm:text-left">
+            Group Order Checkout
+          </h1>
 
-          <div className="grid grid-cols-12 gap-8">
-            {/* LEFT */}
-
-            <div className="col-span-8">
-              <div className="bg-white rounded-lg shadow">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+            {/* LEFT - My Cart */}
+            <div className="lg:col-span-8">
+              <div className="bg-white rounded-lg shadow overflow-hidden h-full flex flex-col">
                 {/* Header */}
-
-                <div className="flex justify-between items-center border-b px-6 py-4">
-                  <div className="flex items-center gap-3 text-[25px] font-semibold">
-                    <FaShoppingCart />
+                <div className="flex justify-between items-center border-b px-4 sm:px-6 py-3 sm:py-4">
+                  <div className="flex items-center gap-2 sm:gap-3 text-lg sm:text-xl md:text-[25px] font-semibold">
                     My Cart
                   </div>
+                  <span className="text-sm sm:text-base text-gray-500">
+                    {cartItems.length} items
+                  </span>
                 </div>
 
                 {/* Empty Cart */}
-
                 {cartItems.length === 0 && (
-                  <div className="text-center py-10 text-gray-500">
-                    Cart is Empty
+                  <div className="flex-1 flex flex-col items-center justify-center py-16 sm:py-20 md:py-24 px-6 bg-gray-50">
+                    <p className="text-xl sm:text-2xl font-semibold text-gray-600">
+                      Your Cart is Empty
+                    </p>
+                    <p className="text-sm sm:text-base text-gray-400 mt-2">
+                      Start adding some delicious items!
+                    </p>
                   </div>
                 )}
 
@@ -204,114 +198,86 @@ const Checkout = () => {
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex justify-between items-center border-b p-6"
+                    className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b p-4 sm:p-5 md:p-6 gap-4 sm:gap-0"
                   >
-                    <div className="flex gap-5">
+                    <div className="flex gap-3 sm:gap-4 md:gap-5 w-full sm:w-auto">
                       <img
                         src={`${BASE_URL}${item.image}`}
                         alt={item.name}
-                        className="w-28 h-24 rounded object-cover"
+                        className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-24 rounded-lg object-cover flex-shrink-0"
                       />
-                      <div>
-                        <h3 className="font-bold">{item.name}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-sm sm:text-base truncate">
+                          {item.name}
+                        </h3>
 
-                        <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
-                          {item.type}
+                        <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full inline-block mt-1">
+                          {item.type || "Food"}
                         </span>
 
-                        <h4 className="font-bold mt-3">£{item.price}</h4>
+                        <h4 className="font-bold mt-2 text-sm sm:text-base">
+                          £{item.price}
+                        </h4>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <button
-                        onClick={() => handleDecrease(item)}
-                        className="bg-gray-200 px-3 py-1 rounded"
-                      >
-                        -
-                      </button>
+                    <div className="flex items-center gap-2 sm:gap-3 md:gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                      <div className="flex items-center gap-1 sm:gap-2">
+                        <button
+                          onClick={() => handleDecrease(item)}
+                          className="bg-gray-200 hover:bg-gray-300 px-3 sm:px-4 py-1.5 rounded-lg text-sm sm:text-base transition-colors"
+                        >
+                          -
+                        </button>
 
-                      <span className="font-bold">{item.quantity}</span>
+                        <span className="font-bold w-6 text-center text-sm sm:text-base">
+                          {item.quantity}
+                        </span>
 
-                      <button
-                        onClick={() => handleIncrease(item)}
-                        className="bg-gray-200 px-3 py-1 rounded"
-                      >
-                        +
-                      </button>
+                        <button
+                          onClick={() => handleIncrease(item)}
+                          className="bg-gray-200 hover:bg-gray-300 px-3 sm:px-4 py-1.5 rounded-lg text-sm sm:text-base transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
 
                       <button
                         onClick={() => handleRemove(item)}
-                        className="bg-red-500 text-white px-3 py-1 rounded"
+                        className="bg-red-500 hover:bg-red-600 text-white px-3 sm:px-4 py-1.5 rounded-lg text-sm transition-colors"
                       >
                         Remove
                       </button>
                     </div>
                   </div>
                 ))}
-                {/* Bottom */}
 
-                <div className="p-6 text-right space-y-2">
-                  <p>
+                {/* Bottom - Always at bottom */}
+                <div className="p-4 sm:p-5 md:p-6 text-right space-y-2 bg-gray-50 mt-auto">
+                  <p className="text-sm sm:text-base">
                     Subtotal
-                    <span className="ml-8 font-semibold">
+                    <span className="ml-6 sm:ml-8 font-semibold">
                       £{subtotal.toFixed(2)}
                     </span>
                   </p>
 
-                  <h2 className="text-xl font-bold">
+                  <h2 className="text-lg sm:text-xl font-bold">
                     Total
-                    <span className="ml-8">£{total.toFixed(2)}</span>
+                    <span className="ml-6 sm:ml-8">£{total.toFixed(2)}</span>
                   </h2>
                 </div>
               </div>
-
-              {/* Friends */}
-
-              <div className="mt-8 space-y-4">
-                {[
-                  {
-                    name: "Veress Botond",
-                    paid: false,
-                  },
-                  {
-                    name: "Erdei Barna",
-                    paid: true,
-                  },
-                  {
-                    name: "Mellau Máté",
-                    paid: true,
-                  },
-                ].map((person, index) => (
-                  <div
-                    key={index}
-                    className="bg-white rounded px-6 py-5 flex justify-between items-center shadow-sm"
-                  >
-                    <div className="flex items-center gap-3">
-                      <MdCheckCircle className="text-yellow-500" />
-
-                      {person.name}
-                    </div>
-
-                    {person.paid ? (
-                      <span className="text-yellow-500 font-semibold">
-                        Paid
-                      </span>
-                    ) : (
-                      <span className="font-semibold">14.00 RON</span>
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* RIGHT */}
+            {/* RIGHT - Total Payment Card */}
+            <div className="lg:col-span-4">
+              <div className="bg-gray-50 rounded-lg shadow p-4 sm:p-5 md:p-6 border border-gray-200 h-full flex flex-col">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">
+                  Total Payment
+                </h2>
 
-            <div className="col-span-4">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-3xl font-bold mb-6">Total Payment</h2>
-                <div className="mt-5 mb-5">
-                  <label className="block font-semibold mb-2">
+                <div className="mt-4 sm:mt-5 mb-4 sm:mb-5">
+                  <label className="block font-semibold mb-2 text-sm sm:text-base">
                     Delivery Address
                   </label>
 
@@ -320,29 +286,30 @@ const Checkout = () => {
                     placeholder="Enter your delivery address..."
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm sm:text-base bg-white"
                   />
                 </div>
-                <div className="flex justify-between">
+
+                <div className="flex justify-between text-sm sm:text-base">
                   <span>Subtotal</span>
                   <span>£{subtotal.toFixed(2)}</span>
                 </div>
 
-                <hr />
+                <hr className="my-3" />
 
-                <div className="flex justify-between font-bold text-xl">
+                <div className="flex justify-between font-bold text-base sm:text-lg md:text-xl">
                   <span>Total</span>
                   <span>£{total.toFixed(2)}</span>
                 </div>
 
                 <button
                   onClick={handleStripePayment}
-                  className="w-full bg-[#FC8A06] text-white rounded py-3 mt-8 font-semibold"
+                  className="w-full bg-[#FC8A06] hover:bg-[#e07a05] text-white rounded-lg py-3 sm:py-4 mt-6 sm:mt-8 font-semibold text-sm sm:text-base transition-colors"
                 >
                   Pay With Card
                 </button>
 
-                <p className="text-xs text-gray-500 mt-8 leading-6">
+                <p className="text-xs text-gray-500 mt-4 sm:mt-6 leading-5 sm:leading-6">
                   Complete your payment securely using Stripe.
                 </p>
               </div>

@@ -1,7 +1,5 @@
 import React from "react";
 import MenuCard from "./MenuCard";
-// import { useDispatch } from "react-redux";
-// import { addToCart } from "../../redux/slices/cartSlice";
 import { toast } from "react-toastify";
 import { API, BASE_URL } from "../../api/endpoints";
 
@@ -30,22 +28,24 @@ const Discount = [
 
 const MenuList = ({ menuItems }) => {
   console.log("Menu Items:", menuItems);
-  // const dispatch = useDispatch();
+
   if (!menuItems || menuItems.length === 0) {
     return (
-      <h1 className="text-center mt-[50px] text-2xl">No Menu Items Found</h1>
+      <h1 className="text-center mt-[30px] sm:mt-[50px] text-xl sm:text-2xl px-4">
+        No Menu Items Found
+      </h1>
     );
   }
 
   const categories = [...new Set(menuItems.map((item) => item.category?.name))];
 
   const handleAddToCart = async (item) => {
-    alert("Function called");
-
     const token = localStorage.getItem("accessToken");
-    console.log(API.CART_ADD);
-    console.log(token);
-    console.log(item.id);
+
+    if (!token) {
+      toast.error("Please login first");
+      return;
+    }
 
     try {
       const response = await fetch(API.CART_ADD, {
@@ -61,24 +61,22 @@ const MenuList = ({ menuItems }) => {
 
       const data = await response.json();
 
-      console.log("STATUS:", response.status);
-      console.log("RESPONSE:", data);
-
       if (response.ok) {
-        toast.success("Added");
+        toast.success("Added to cart");
       } else {
-        toast.error(data.error);
+        toast.error(data.error || "Unable to add to cart");
       }
     } catch (err) {
       console.log(err);
+      toast.error("Something went wrong");
     }
   };
+
   return (
     <>
       {/* Discount */}
-
-      <section className="max-w-7xl mx-auto py-12">
-        <div className="grid grid-cols-3 gap-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
           {Discount.map((item) => (
             <MenuCard key={item.id} type="discount" image={item.image} />
           ))}
@@ -91,28 +89,24 @@ const MenuList = ({ menuItems }) => {
         );
 
         return (
-          <section key={category} className="max-w-7xl mx-auto py-10">
-            <h2 className="text-4xl text-[#FC8A06] font-bold mb-8">
+          <section key={category} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl text-[#FC8A06] font-bold mb-4 sm:mb-6 md:mb-8">
               {category}
             </h2>
 
-            <div className="grid grid-cols-3 gap-6">
-              {items.map((item) => {
-                console.log("Rendering:", item);
-
-                return (
-                  <MenuCard
-                    key={item.id}
-                    id={item.id}
-                    type={category.toLowerCase()}
-                    name={item.name}
-                    description={item.description}
-                    price={item.price}
-                    image={`${BASE_URL}${item.image}`}
-                    onAddToCart={() => handleAddToCart(item)}
-                  />
-                );
-              })}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
+              {items.map((item) => (
+                <MenuCard
+                  key={item.id}
+                  id={item.id}
+                  type={category.toLowerCase()}
+                  name={item.name}
+                  description={item.description}
+                  price={item.price}
+                  image={`${BASE_URL}${item.image}`}
+                  onAddToCart={() => handleAddToCart(item)}
+                />
+              ))}
             </div>
           </section>
         );
@@ -120,4 +114,5 @@ const MenuList = ({ menuItems }) => {
     </>
   );
 };
+
 export default MenuList;
