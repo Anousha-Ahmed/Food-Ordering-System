@@ -49,7 +49,10 @@ schema_view = get_schema_view(        # ✅ only one schema_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('user/',include("user.urls")),
-    path('restaurants/',include("restaurants.urls")),
-    path('order/',include("order.urls")),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('user/', include("user.urls")),
+    path('restaurants/', include("restaurants.urls")),
+    path('order/', include("order.urls")),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
