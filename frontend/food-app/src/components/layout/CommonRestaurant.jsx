@@ -1,25 +1,37 @@
-import React, { useEffect, useState } from "react";
-import { API } from "../../api/endpoints";
+import React from "react";
+import { BASE_URL } from "../../api/endpoints";
+import { useData } from "../../context/DataContext";
 import { useNavigate } from "react-router-dom";
 
-const BASE_URL = "http://127.0.0.1:8000";
-
 const CommonRestaurant = () => {
-  const [restaurants, setRestaurants] = useState([]);
+  const { restaurants, restaurantsLoading } = useData();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch(API.ALL_RESTAURANT)
-      .then((res) => res.json())
-      .then((data) => {
-        setRestaurants(data.data || []);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  if (restaurantsLoading) {
+    return (
+      <section className="max-w-7xl mx-auto px-8 lg:px-0 py-8 mt-[20px]">
+        <h2 className="text-[32px] font-bold mb-8">
+          All Restaurants
+        </h2>
+
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-5">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="bg-gray-300 h-[150px] rounded-t-xl"></div>
+
+              <div className="bg-gray-300 h-[60px] rounded-b-xl mt-1"></div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="max-w-7xl mx-auto px-8 lg:px-0 py-8 mt-[20px]">
-      <h2 className="text-[32px] font-bold mb-8">All Restaurants</h2>
+      <h2 className="text-[32px] font-bold mb-8">
+        All Restaurants
+      </h2>
 
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-5">
         {restaurants.map((item) => (
@@ -42,6 +54,7 @@ const CommonRestaurant = () => {
               <h3 className="text-center text-white font-semibold">
                 {item.name}
               </h3>
+
               <h3 className="text-center text-white font-semibold">
                 {item.address}
               </h3>

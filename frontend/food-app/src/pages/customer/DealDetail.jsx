@@ -7,37 +7,49 @@ import { API, BASE_URL } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import { FaStar, FaStarHalfAlt, FaPlus, FaMinus } from "react-icons/fa";
 import { MdDeliveryDining } from "react-icons/md";
+import { useData } from "../../context/DataContext";
 
 const DealDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const { deals, dealsLoading } = useData();
+
   const [deal, setDeal] = useState(null);
-  const [allDeals, setAllDeals] = useState([]);
   const [selectedImage, setSelectedImage] = useState("");
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
-    fetch(API.DEAL_DETAIL(id))
-      .then((res) => res.json())
-      .then((data) => {
-        setDeal(data.data);
-        if (data.data.items.length > 0) {
-          setSelectedImage(`${BASE_URL}${data.data.items[0].menu_item.image}`);
+    if (!dealsLoading) {
+      const foundDeal = deals.find(
+        (d) => d.id === Number(id)
+      );
+
+      if (foundDeal) {
+        setDeal(foundDeal);
+
+        if (foundDeal.items.length > 0) {
+          setSelectedImage(
+            `${BASE_URL}${foundDeal.items[0].menu_item.image}`
+          );
         }
-      });
-  }, [id]);
+      }
+    }
+  }, [deals, dealsLoading, id]);
 
-  useEffect(() => {
-    fetch(API.ALL_DEAL)
-      .then((res) => res.json())
-      .then((data) => setAllDeals(data.data || []));
-  }, []);
+  if (dealsLoading || !deal) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <h1 className="text-3xl font-bold">
+          Loading...
+        </h1>
+      </div>
+    );
+  }
 
-  if (!deal)
-    return <h1 className="text-center mt-20 text-2xl sm:text-3xl font-bold px-4">Loading...</h1>;
-
-  const similarDeals = allDeals.filter((d) => d.id !== deal.id);
+  const similarDeals = deals.filter(
+    (d) => d.id !== deal.id
+  );
 
   const handleAddDeal = async () => {
     const token = localStorage.getItem("accessToken");

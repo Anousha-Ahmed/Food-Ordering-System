@@ -53,13 +53,10 @@ const MenuCard = ({
           onClick={(e) => {
             e.stopPropagation();
 
-            console.log("Button clicked");
-
             try {
               onAddToCart();
-              console.log("Function finished");
             } catch (err) {
-              console.error("ERROR:", err);
+              console.error(err);
             }
           }}
           className="absolute bottom-0 right-0 w-[80px] h-[80px] bg-white/90 rounded-tl-[40px] flex items-center justify-center"
