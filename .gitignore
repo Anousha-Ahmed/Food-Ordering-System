@@ -1,6 +1,6 @@
 # Backend
-backend/env/
-backend/media/
+# backend/env/
+# backend/media/
 
 # Frontend
 frontend/node_modules/
@@ -82,7 +82,7 @@ ENV/
 *.log
 db.sqlite3-journal
 
-media/
+
 
 staticfiles/
 
