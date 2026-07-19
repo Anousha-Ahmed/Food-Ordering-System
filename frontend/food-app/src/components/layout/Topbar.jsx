@@ -1,6 +1,6 @@
 import React from "react";
 import { FaMapMarkerAlt, FaArrowDown } from "react-icons/fa";
-import FullShoppingBasket from "../../assets/TopBarImg/FullShoppingBasket.png";
+import FullShoppingBasket from "../../assets/TopbarImg/FullShoppingBasket";
 
 const TopBar = () => {
   return (
