@@ -328,8 +328,8 @@ class StripeCheckoutView(APIView):
                 }
             ],
             mode="payment",
-            success_url="http://localhost:5173/payment-success?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://localhost:5173/payment-cancel"
+            success_url=f"{settings.FRONTEND_URL}/payment-success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{settings.FRONTEND_URL}/payment-cancel",
         )
         return Response({
             "checkout_url":session.url,
