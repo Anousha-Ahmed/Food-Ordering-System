@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { API } from "../../api/endpoints";
 import { toast } from "react-toastify";
+import { useData } from "../../context/DataContext";
 
 const emptyForm = {
   name: "",
@@ -11,60 +12,13 @@ const emptyForm = {
 };
 
 const ManageMenu = () => {
-  const [menu, setMenu] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
-  const [categories, setCategories] = useState([]);
-
+  const { menuItems, menuLoading, restaurants, categories, refreshData } = useData();
+  
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadMenu();
-    loadRestaurants();
-    loadCategories();
-  }, []);
-
   const token = localStorage.getItem("accessToken");
-
-  //  MENU 
-
-  const loadMenu = async () => {
-    try {
-      const res = await fetch(API.ALL_MENUITEM);
-      const data = await res.json();
-      setMenu(data.data || data || []);
-    } catch (err) {
-      console.log(err);
-      toast.error("Unable to load menu");
-    }
-  };
-
-  //  RESTAURANTS 
-
-  const loadRestaurants = async () => {
-    try {
-      const res = await fetch(API.ALL_RESTAURANT);
-      const data = await res.json();
-      setRestaurants(data.data || []);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //  CATEGORIES 
-
-  const loadCategories = async () => {
-    try {
-      const res = await fetch(API.ALL_CATEGORY);
-      const data = await res.json();
-      setCategories(data.data || []);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  //  INPUT 
 
   const handleChange = (e) => {
     setForm({
@@ -73,15 +27,8 @@ const ManageMenu = () => {
     });
   };
 
-  //  SAVE 
-
   const saveMenu = async () => {
-    if (
-      !form.name.trim() ||
-      !form.price ||
-      !form.restaurant ||
-      !form.category
-    ) {
+    if (!form.name.trim() || !form.price || !form.restaurant || !form.category) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -107,7 +54,7 @@ const ManageMenu = () => {
         toast.success(editingId ? "Menu Updated" : "Menu Created");
         setEditingId(null);
         setForm(emptyForm);
-        loadMenu();
+        refreshData();
       } else {
         toast.error(data.error || "Error");
       }
@@ -119,8 +66,6 @@ const ManageMenu = () => {
     }
   };
 
-  //  EDIT 
-
   const editMenu = (item) => {
     setEditingId(item.id);
     setForm({
@@ -130,14 +75,11 @@ const ManageMenu = () => {
       restaurant: item.restaurant?.id || "",
       category: item.category?.id || "",
     });
-
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
-
-  //  DELETE 
 
   const deleteMenu = async (id) => {
     if (!window.confirm("Delete Menu Item?")) return;
@@ -152,7 +94,7 @@ const ManageMenu = () => {
 
       if (response.ok) {
         toast.success("Menu Deleted");
-        loadMenu();
+        refreshData();
       } else {
         toast.error("Unable to delete");
       }
@@ -162,14 +104,31 @@ const ManageMenu = () => {
     }
   };
 
+  // ✅ Loading State
+  if (menuLoading) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col justify-center items-center h-96">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
+          <p className="mt-6 text-gray-600 text-lg font-medium">
+            Loading Menu Items...
+          </p>
+          <p className="text-gray-400 text-sm">Please wait</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
         Manage Menu
+        <span className="text-sm font-normal text-gray-500 ml-3">
+          ({menuItems.length})
+        </span>
       </h1>
 
-      {/*  FORM  */}
-
+      {/* FORM */}
       <div className="bg-white p-4 sm:p-6 rounded-xl shadow mb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <input
@@ -231,9 +190,16 @@ const ManageMenu = () => {
         <button
           onClick={saveMenu}
           disabled={loading}
-          className="w-full sm:w-auto mt-4 bg-[#FC8A06] hover:bg-orange-600 transition text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50"
+          className="w-full sm:w-auto mt-4 bg-[#FC8A06] hover:bg-orange-600 transition text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? "Saving..." : editingId ? "Update Menu" : "Add Menu"}
+          {loading ? (
+            <>
+              <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+              Saving...
+            </>
+          ) : (
+            editingId ? "Update Menu" : "Add Menu"
+          )}
         </button>
 
         {editingId && (
@@ -242,15 +208,14 @@ const ManageMenu = () => {
               setEditingId(null);
               setForm(emptyForm);
             }}
-            className="ml-0 sm:ml-3 mt-3 sm:mt-4 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium w-full sm:w-auto"
+            className="ml-0 sm:ml-3 mt-3 sm:mt-4 bg-gray-500 hover:bg-gray-600 transition text-white px-6 py-3 rounded-lg font-medium w-full sm:w-auto"
           >
             Cancel
           </button>
         )}
       </div>
 
-      {/*  TABLE  */}
-
+      {/* TABLE */}
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full min-w-[600px]">
           <thead className="bg-[#FC8A06] text-white">
@@ -264,18 +229,15 @@ const ManageMenu = () => {
           </thead>
 
           <tbody>
-            {menu.length === 0 ? (
+            {menuItems.length === 0 ? (
               <tr>
                 <td colSpan="5" className="text-center py-10 text-gray-500">
                   No menu items found
                 </td>
               </tr>
             ) : (
-              menu.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
+              menuItems.map((item) => (
+                <tr key={item.id} className="border-b hover:bg-gray-50 transition">
                   <td className="py-3 px-3 font-medium">{item.name}</td>
                   <td className="py-3 px-3">{item.restaurant?.name || "-"}</td>
                   <td className="py-3 px-3">{item.category?.name || "-"}</td>
@@ -286,13 +248,13 @@ const ManageMenu = () => {
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
                       <button
                         onClick={() => editMenu(item)}
-                        className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition text-sm"
+                        className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 transition text-white py-2 rounded-lg text-sm"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => deleteMenu(item.id)}
-                        className="w-20 sm:w-24 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition text-sm"
+                        className="w-20 sm:w-24 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded-lg text-sm"
                       >
                         Delete
                       </button>

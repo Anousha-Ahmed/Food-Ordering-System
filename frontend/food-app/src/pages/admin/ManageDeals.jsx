@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { API, BASE_URL } from "../../api/endpoints";
 import { toast } from "react-toastify";
+import { useData } from "../../context/DataContext";
 
 const emptyForm = {
   restaurant_id: "",
@@ -13,52 +14,16 @@ const emptyForm = {
 };
 
 const ManageDeals = () => {
-  const [deals, setDeals] = useState([]);
-  const [restaurants, setRestaurants] = useState([]);
+  const { deals, dealsLoading, restaurants, refreshData } = useData();
+  
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("accessToken");
 
-  useEffect(() => {
-    loadDeals();
-    loadRestaurants();
-  }, []);
-
-  // Load Deals
-  const loadDeals = async () => {
-    try {
-      const res = await fetch(API.ALL_DEAL);
-      const data = await res.json();
-
-      if (res.ok) {
-        setDeals(data.data || []);
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Unable to load deals");
-    }
-  };
-
-  // Load Restaurants
-  const loadRestaurants = async () => {
-    try {
-      const res = await fetch(API.ALL_RESTAURANT);
-      const data = await res.json();
-
-      if (res.ok) {
-        setRestaurants(data.data || []);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // Inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setForm({
       ...form,
       [name]: type === "checkbox" ? checked : value,
@@ -72,7 +37,6 @@ const ManageDeals = () => {
     });
   };
 
-  // Save
   const saveDeal = async () => {
     if (!form.restaurant_id || !form.name.trim() || !form.combo_price) {
       toast.error("Please fill all required fields");
@@ -83,7 +47,6 @@ const ManageDeals = () => {
 
     try {
       const formData = new FormData();
-
       formData.append("restaurant_id", form.restaurant_id);
       formData.append("name", form.name);
       formData.append("description", form.description || "");
@@ -110,11 +73,9 @@ const ManageDeals = () => {
 
       if (response.ok) {
         toast.success(editingId ? "Deal Updated" : "Deal Created");
-
         setEditingId(null);
         setForm(emptyForm);
-
-        loadDeals();
+        refreshData();
       } else {
         toast.error(data.error || "Error");
       }
@@ -126,10 +87,8 @@ const ManageDeals = () => {
     }
   };
 
-  // Edit
   const editDeal = (deal) => {
     setEditingId(deal.id);
-
     setForm({
       restaurant_id: deal.restaurant_id,
       name: deal.name,
@@ -139,14 +98,12 @@ const ManageDeals = () => {
       is_active: deal.is_active,
       is_featured: deal.is_featured,
     });
-
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
 
-  // Delete
   const deleteDeal = async (id) => {
     if (!window.confirm("Delete Deal?")) return;
 
@@ -160,7 +117,7 @@ const ManageDeals = () => {
 
       if (response.ok) {
         toast.success("Deal Deleted");
-        loadDeals();
+        refreshData();
       } else {
         toast.error("Unable to delete");
       }
@@ -169,6 +126,21 @@ const ManageDeals = () => {
       toast.error("Server Error");
     }
   };
+
+  // ✅ Loading State
+  if (dealsLoading) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col justify-center items-center h-96">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
+          <p className="mt-6 text-gray-600 text-lg font-medium">
+            Loading Deals...
+          </p>
+          <p className="text-gray-400 text-sm">Please wait</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -179,8 +151,7 @@ const ManageDeals = () => {
         </span>
       </h1>
 
-      {/* ================= FORM ================= */}
-
+      {/* FORM */}
       <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <select
@@ -223,7 +194,7 @@ const ManageDeals = () => {
           />
 
           <textarea
-            rows="3"
+            rows={3}
             name="description"
             placeholder="Description"
             value={form.description}
@@ -260,9 +231,16 @@ const ManageDeals = () => {
           <button
             onClick={saveDeal}
             disabled={loading}
-            className="w-full sm:w-auto bg-[#FC8A06] hover:bg-orange-600 transition text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50"
+            className="w-full sm:w-auto bg-[#FC8A06] hover:bg-orange-600 transition text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Saving..." : editingId ? "Update Deal" : "Create Deal"}
+            {loading ? (
+              <>
+                <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+                Saving...
+              </>
+            ) : (
+              editingId ? "Update Deal" : "Create Deal"
+            )}
           </button>
 
           {editingId && (
@@ -271,7 +249,7 @@ const ManageDeals = () => {
                 setEditingId(null);
                 setForm(emptyForm);
               }}
-              className="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium"
+              className="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 transition text-white px-6 py-3 rounded-lg font-medium"
             >
               Cancel
             </button>
@@ -279,8 +257,7 @@ const ManageDeals = () => {
         </div>
       </div>
 
-      {/* ================= TABLE ================= */}
-
+      {/* TABLE */}
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead className="bg-[#FC8A06] text-white">
@@ -303,10 +280,7 @@ const ManageDeals = () => {
               </tr>
             ) : (
               deals.map((deal) => (
-                <tr
-                  key={deal.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
+                <tr key={deal.id} className="border-b hover:bg-gray-50 transition">
                   <td className="py-3 px-3 text-center">
                     {deal.image ? (
                       <img
@@ -320,11 +294,9 @@ const ManageDeals = () => {
                   </td>
 
                   <td className="py-3 px-3 font-medium">{deal.name}</td>
-
                   <td className="py-3 px-3 text-center font-semibold text-[#FC8A06]">
                     £{deal.combo_price}
                   </td>
-
                   <td className="py-3 px-3 text-center">
                     {deal.is_featured ? (
                       <span className="bg-purple-500 text-white px-2 py-1 rounded-full text-xs">
@@ -336,7 +308,6 @@ const ManageDeals = () => {
                       </span>
                     )}
                   </td>
-
                   <td className="py-3 px-3 text-center">
                     {deal.is_active ? (
                       <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs whitespace-nowrap">
@@ -348,19 +319,17 @@ const ManageDeals = () => {
                       </span>
                     )}
                   </td>
-
                   <td className="py-3 px-3">
                     <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
                       <button
                         onClick={() => editDeal(deal)}
-                        className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg transition text-sm"
+                        className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 transition text-white py-2 rounded-lg text-sm"
                       >
                         Edit
                       </button>
-
                       <button
                         onClick={() => deleteDeal(deal.id)}
-                        className="w-20 sm:w-24 bg-red-500 hover:red-600 text-white py-2 rounded-lg transition text-sm"
+                        className="w-20 sm:w-24 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded-lg text-sm"
                       >
                         Delete
                       </button>
