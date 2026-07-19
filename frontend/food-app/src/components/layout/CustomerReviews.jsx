@@ -59,9 +59,10 @@ const CustomerReviews = () => {
           </div>
         </div>
 
-        {/* Review Cards with Rating Badges Below */}
+        {/* Review Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
-          {reviews.map((item) => (
+          {reviews.map((item, index) => (
+            // CHANGE 1: Added flex flex-col to each card wrapper
             <div key={item.id} className="flex flex-col items-center">
               {/* Card */}
               <div className="bg-white rounded-md px-4 sm:px-5 md:px-6 lg:px-7 py-4 sm:py-5 md:py-6 h-auto sm:h-[230px] md:h-[240px] lg:h-[250px] shadow-sm w-full">
@@ -121,14 +122,16 @@ const CustomerReviews = () => {
                 </p>
               </div>
 
-              {/* Rating Badge - Below each card */}
-              <div className="lg:block hidden -mt-2">
-                <img
-                  src={Review}
-                  alt=""
-                  className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[130px] h-[90px] sm:h-[110px] md:h-[130px] lg:h-[140px] rounded-md"
-                />
-              </div>
+              {/* CHANGE 2: Rating Badge - Only for middle card (index === 1) */}
+              {index === 1 && (
+                <div className="lg:block hidden -mt-2">
+                  <img
+                    src={Review}
+                    alt=""
+                    className="w-[80px] sm:w-[100px] md:w-[120px] lg:w-[130px] h-[90px] sm:h-[110px] md:h-[130px] lg:h-[140px] rounded-md"
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
