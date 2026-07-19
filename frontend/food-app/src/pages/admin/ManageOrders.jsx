@@ -4,14 +4,18 @@ import { toast } from "react-toastify";
 
 const ManageOrders = () => {
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // ✅ Initial loading true
   const [updatingId, setUpdatingId] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadOrders();
   }, []);
 
   const loadOrders = async () => {
+    setLoading(true); // ✅ Loading start
+    setError(null);
+    
     try {
       const token = localStorage.getItem("accessToken");
 
@@ -28,17 +32,20 @@ const ManageOrders = () => {
       if (response.ok) {
         setOrders(data.data || []);
       } else {
+        setError(data.error || "Unable to load orders");
         toast.error(data.error || "Unable to load orders");
       }
     } catch (err) {
       console.log(err);
+      setError("Server Error");
       toast.error("Server Error");
+    } finally {
+      setLoading(false); // ✅ Loading end
     }
   };
 
   const updateStatus = async (id, status) => {
     setUpdatingId(id);
-    setLoading(true);
 
     try {
       const token = localStorage.getItem("accessToken");
@@ -58,7 +65,7 @@ const ManageOrders = () => {
 
       if (response.ok) {
         toast.success("Order Updated");
-        loadOrders();
+        await loadOrders(); // ✅ Reload orders after update
       } else {
         toast.error(data.error || "Update Failed");
       }
@@ -67,7 +74,6 @@ const ManageOrders = () => {
       toast.error("Server Error");
     } finally {
       setUpdatingId(null);
-      setLoading(false);
     }
   };
 
@@ -91,6 +97,41 @@ const ManageOrders = () => {
     }
   };
 
+  // ✅ Loading State
+  if (loading) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex flex-col justify-center items-center h-96">
+          {/* Spinner */}
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
+          <p className="mt-6 text-gray-600 text-lg font-medium">
+            Loading Orders...
+          </p>
+          <p className="text-gray-400 text-sm">Please wait</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Error State
+  if (error) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="bg-white rounded-xl shadow-md p-8 text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-gray-700 mb-2">Failed to Load Orders</h2>
+          <p className="text-gray-500 mb-4">{error}</p>
+          <button
+            onClick={loadOrders}
+            className="bg-[#FC8A06] hover:bg-orange-600 transition text-white px-6 py-3 rounded-lg font-medium"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
@@ -100,8 +141,7 @@ const ManageOrders = () => {
         </span>
       </h1>
 
-      {/*  TABLE  */}
-
+      {/* TABLE */}
       <div className="bg-white rounded-xl shadow-md overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead className="bg-[#FC8A06] text-white">
@@ -157,28 +197,31 @@ const ManageOrders = () => {
                     </td>
 
                     <td className="py-3 px-3">
-                      <select
-                        className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
-                        value={order.current_status}
-                        onChange={(e) =>
-                          updateStatus(order.order_id, e.target.value)
-                        }
-                        disabled={updatingId === order.order_id}
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="accepted">Accepted</option>
-                        <option value="preparing">Preparing</option>
-                        <option value="out_for_delivery">
-                          Out for Delivery
-                        </option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
-                      </select>
-                      {updatingId === order.order_id && (
-                        <span className="ml-2 text-xs text-gray-500">
-                          Updating...
-                        </span>
-                      )}
+                      <div className="flex items-center justify-center gap-2">
+                        <select
+                          className="w-full sm:w-auto border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
+                          value={order.current_status}
+                          onChange={(e) =>
+                            updateStatus(order.order_id, e.target.value)
+                          }
+                          disabled={updatingId === order.order_id}
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="accepted">Accepted</option>
+                          <option value="preparing">Preparing</option>
+                          <option value="out_for_delivery">
+                            Out for Delivery
+                          </option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                        
+                        {updatingId === order.order_id && (
+                          <span className="inline-block">
+                            <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-[#FC8A06]"></span>
+                          </span>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
