@@ -67,20 +67,16 @@ const Login = () => {
   return (
     <section className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* ✅ Left Side - Branding */}
-        <div className="hidden lg:flex bg-[#03081F] text-white flex-col justify-center items-center p-12">
+        {/* ✅ Left Side - Branding (Clean & Professional) */}
+        <div className="hidden lg:flex bg-gradient-to-br from-[#03081F] to-[#1a1a3e] text-white flex-col justify-center items-center p-12">
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
 
           <h1 className="text-5xl font-bold text-center leading-tight">
-            Welcome
-            <br />
-            Back 👋
+            Welcome Back
           </h1>
 
-          <p className="text-center text-gray-300 mt-6 leading-7">
-            Login to your account and enjoy
-            <br />
-            fast ordering with Order.uk.
+          <p className="text-center text-gray-300 mt-4 leading-7 max-w-sm">
+            Login to your account and enjoy fast ordering with Order.uk.
           </p>
         </div>
 
@@ -90,14 +86,14 @@ const Login = () => {
             <img src={Logo} alt="Logo" className="h-14" />
           </div>
 
-          <h2 className="text-4xl font-bold text-[#03081F]">Login</h2>
+          <h2 className="text-3xl font-bold text-[#03081F]">Login</h2>
           <p className="text-gray-500 mt-2 mb-8">
             Welcome back! Please login to continue.
           </p>
 
           <form onSubmit={handleLogin}>
-            <label className="font-medium">Email Address</label>
-            <div className="flex items-center border rounded-xl px-4 h-14 mt-2">
+            <label className="font-medium text-gray-700">Email Address</label>
+            <div className="flex items-center border border-gray-300 rounded-xl px-4 h-14 mt-2 focus-within:border-[#FC8A06] focus-within:ring-2 focus-within:ring-[#FC8A06]/20 transition-all">
               <FaEnvelope className="text-gray-400" />
               <input
                 type="email"
@@ -105,37 +101,40 @@ const Login = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="example@email.com"
-                className="flex-1 outline-none px-3"
+                className="flex-1 outline-none px-3 bg-transparent"
                 required
               />
             </div>
 
-            <label className="font-medium block mt-5">Password</label>
-            <div className="flex items-center border rounded-xl px-4 h-14 mt-2">
+            <label className="font-medium text-gray-700 block mt-5">
+              Password
+            </label>
+            <div className="flex items-center border border-gray-300 rounded-xl px-4 h-14 mt-2 focus-within:border-[#FC8A06] focus-within:ring-2 focus-within:ring-[#FC8A06]/20 transition-all">
               <FaLock className="text-gray-400" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="********"
-                className="flex-1 outline-none px-3"
+                placeholder="Enter your password"
+                className="flex-1 outline-none px-3 bg-transparent"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-400 hover:text-gray-600"
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
 
             <div className="flex justify-between items-center mt-5 text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" />
+              <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
+                <input type="checkbox" className="accent-[#FC8A06] w-4 h-4" />
                 Remember me
               </label>
-              <button type="button" className="text-[#FC8A06]">
+              <button type="button" className="text-[#FC8A06] hover:underline">
                 Forgot Password?
               </button>
             </div>
@@ -143,7 +142,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-[#FC8A06] hover:bg-orange-600 duration-300 text-white rounded-xl font-semibold text-lg mt-8 disabled:opacity-50"
+              className="w-full h-14 bg-[#FC8A06] hover:bg-[#e07a05] duration-300 text-white rounded-xl font-semibold text-lg mt-8 disabled:opacity-50 transition-all shadow-md hover:shadow-lg"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -151,13 +150,16 @@ const Login = () => {
 
           <div className="flex items-center my-8">
             <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-4 text-gray-400">OR</span>
+            <span className="px-4 text-gray-400 text-sm">OR</span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
           <p className="text-center text-gray-600">
             Don't have an account?{" "}
-            <Link to="/signup" className="text-[#FC8A06] font-semibold">
+            <Link
+              to="/signup"
+              className="text-[#FC8A06] font-semibold hover:underline"
+            >
               Sign Up
             </Link>
           </p>
