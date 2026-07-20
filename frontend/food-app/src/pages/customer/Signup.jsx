@@ -230,7 +230,7 @@ const Signup = () => {
               type="submit"
               className="w-full h-14 bg-[#FC8A06] hover:bg-orange-600 text-white rounded-xl font-semibold text-lg mt-8"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading ? "Creating Account" : "Create Account"}
               
             </button>
           </form>

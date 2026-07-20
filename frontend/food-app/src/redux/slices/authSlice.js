@@ -1,28 +1,45 @@
-import { createSlice } from "@reduxjs/toolkit";
+import React from "react";
+import { FaUser } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../../redux/slices/authSlice";
 
+const AuthButtons = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
-const initialState = {
-    user : JSON.parse(localStorage.getItem("user")) || null,
+  // ✅ Logout Handler - Sabke liye home page
+  const handleLogout = () => {
+    dispatch(logout()); // Redux state clear
+
+    // LocalStorage clear
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+
+    navigate("/"); // ✅ Home page pe redirect (admin ya customer dono)
+  };
+
+  if (!user) {
+    return (
+      <button onClick={() => navigate("/login")} className="...">
+        Login / Signup
+      </button>
+    );
+  }
+
+  return (
+    <div className="...">
+      <div>
+        <span>{user.username}</span>
+      </div>
+      <button onClick={handleLogout}>
+        Logout
+      </button>
+    </div>
+  );
 };
 
-const authSlice = createSlice({
-    name : "auth",
-    initialState,
-
-    reducers:{
-        loginSuccess : (state,action) => {
-            state.user = action.payload;
-        },
-
-        logout: (state) => {
-            state.user = null;
-            localStorage.removeItem("user");
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            localStorage.removeItem("isLoggedIn");
-        },
-    },
-});
-
-export const {loginSuccess,logout} = authSlice.actions;
-export default authSlice.reducer;
+export default AuthButtons;
