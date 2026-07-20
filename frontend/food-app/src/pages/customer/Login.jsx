@@ -67,7 +67,7 @@ const Login = () => {
   return (
     <section className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* ✅ Left Side - Branding (Logo + Welcome Text) */}
+        {/* ✅ Left Side - Branding */}
         <div className="hidden lg:flex bg-[#03081F] text-white flex-col justify-center items-center p-12">
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
 
@@ -84,20 +84,18 @@ const Login = () => {
           </p>
         </div>
 
-        {/* ✅ Right Side - Login Form */}
+        {/* Right Side - Login Form */}
         <div className="p-8 sm:p-12">
           <div className="lg:hidden flex justify-center mb-8">
             <img src={Logo} alt="Logo" className="h-14" />
           </div>
 
           <h2 className="text-4xl font-bold text-[#03081F]">Login</h2>
-
           <p className="text-gray-500 mt-2 mb-8">
             Welcome back! Please login to continue.
           </p>
 
           <form onSubmit={handleLogin}>
-            {/* Email */}
             <label className="font-medium">Email Address</label>
             <div className="flex items-center border rounded-xl px-4 h-14 mt-2">
               <FaEnvelope className="text-gray-400" />
@@ -112,7 +110,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Password */}
             <label className="font-medium block mt-5">Password</label>
             <div className="flex items-center border rounded-xl px-4 h-14 mt-2">
               <FaLock className="text-gray-400" />
@@ -133,7 +130,6 @@ const Login = () => {
               </button>
             </div>
 
-            {/* Remember & Forgot Password */}
             <div className="flex justify-between items-center mt-5 text-sm">
               <label className="flex items-center gap-2">
                 <input type="checkbox" />
@@ -144,7 +140,6 @@ const Login = () => {
               </button>
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
@@ -154,14 +149,12 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center my-8">
             <div className="flex-1 h-px bg-gray-300"></div>
             <span className="px-4 text-gray-400">OR</span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Signup Link */}
           <p className="text-center text-gray-600">
             Don't have an account?{" "}
             <Link to="/signup" className="text-[#FC8A06] font-semibold">
