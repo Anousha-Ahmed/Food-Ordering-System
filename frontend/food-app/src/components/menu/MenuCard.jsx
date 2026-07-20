@@ -12,6 +12,7 @@ const MenuCard = ({
   onAddToCart,
 }) => {
   const navigate = useNavigate();
+
   // Discount Card
   if (type === "discount") {
     return (
@@ -31,37 +32,49 @@ const MenuCard = ({
       // onClick={()=>navigate(`/menuitem/${id}`)}
     >
       {/* Left */}
-      <div className="w-[55%] p-6 flex flex-col justify-between">
-        <div>
-          <h2 className="text-[18px] font-bold leading-6">{name}</h2>
+      <div className="w-[55%] p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+        <div className="flex-1 min-h-0">
+          {/* ✅ Name Truncate - 1 line */}
+          <h2 className="text-[16px] sm:text-[17px] md:text-[18px] font-bold leading-6 truncate">
+            {name}
+          </h2>
 
-          <p className="text-[13px] text-black mt-5 leading-6">{description}</p>
+          {/* ✅ Description Truncate - 2 lines max */}
+          <p className="text-[12px] sm:text-[13px] text-black mt-2 md:mt-3 leading-5 line-clamp-2">
+            {description}
+          </p>
         </div>
 
-        <h3 className="font-bold text-[22px]">GBP {price}</h3>
+        {/* ✅ Price - Fixed at bottom */}
+        <h3 className="font-bold text-[18px] sm:text-[20px] md:text-[22px] mt-2 flex-shrink-0">
+          GBP {price}
+        </h3>
       </div>
 
       {/* Right */}
       <div className="relative w-[45%]">
         <img
           src={image}
-          alt=""
-          className="absolute right-4 top-4 w-[170px] h-[170px] rounded-xl object-cover"
+          alt={name}
+          className="absolute right-2 sm:right-3 md:right-4 top-3 sm:top-4 w-[130px] sm:w-[150px] md:w-[170px] h-[130px] sm:h-[150px] md:h-[170px] rounded-xl object-cover"
         />
 
         <button
           onClick={(e) => {
             e.stopPropagation();
-
             try {
               onAddToCart();
             } catch (err) {
               console.error(err);
             }
           }}
-          className="absolute bottom-0 right-0 w-[80px] h-[80px] bg-white/90 rounded-tl-[40px] flex items-center justify-center"
+          className="absolute bottom-0 right-0 w-[65px] sm:w-[70px] md:w-[80px] h-[65px] sm:h-[70px] md:h-[80px] bg-white/90 rounded-tl-[35px] sm:rounded-tl-[40px] flex items-center justify-center"
         >
-          <img src={AddLogo} alt="" className="w-12" />
+          <img
+            src={AddLogo}
+            alt="Add to cart"
+            className="w-9 sm:w-10 md:w-12"
+          />
         </button>
       </div>
     </div>

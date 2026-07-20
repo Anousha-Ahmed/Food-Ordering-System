@@ -19,6 +19,10 @@ const RestaurantsItems = () => {
   const { menuItems, menuLoading } = useData();
   const [activeCategory, setActiveCategory] = useState("All");
 
+  // ✅ View More States
+  const [visibleCount, setVisibleCount] = useState(6); // Initially show 6 items
+  const incrementCount = 6; // Load 6 more each time
+
   if (menuLoading) {
     return (
       <>
@@ -39,6 +43,21 @@ const RestaurantsItems = () => {
     activeCategory === "All"
       ? menuItems
       : menuItems.filter((item) => item.category?.name === activeCategory);
+
+  // ✅ View More Logic
+  const visibleItems = filteredItems.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredItems.length;
+
+  // ✅ Load More Handler
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + incrementCount);
+  };
+
+  // ✅ Reset when category changes
+  const handleCategoryChange = (category) => {
+    setActiveCategory(category);
+    setVisibleCount(6); // Reset to 6 items
+  };
 
   const handleAddToCart = async (item) => {
     const token = localStorage.getItem("accessToken");
@@ -119,7 +138,7 @@ const RestaurantsItems = () => {
           {categories.map((category) => (
             <button
               key={category}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => handleCategoryChange(category)}
               className={`px-8 py-3 rounded-full font-semibold transition ${
                 activeCategory === category
                   ? "bg-[#03081F] text-white"
@@ -133,27 +152,58 @@ const RestaurantsItems = () => {
       </div>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        <h2 className="text-4xl font-bold mb-8">
-          {activeCategory === "All" ? "All Menu Items" : activeCategory}
-        </h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-4xl font-bold">
+            {activeCategory === "All" ? "All Menu Items" : activeCategory}
+          </h2>
+          {/* ✅ Show total items */}
+          <span className="text-gray-500 text-sm">
+            Showing {Math.min(visibleCount, filteredItems.length)} of{" "}
+            {filteredItems.length} items
+          </span>
+        </div>
+
         {filteredItems.length === 0 ? (
           <div className="h-40 flex justify-center items-center">
             <h2 className="text-3xl font-bold text-gray-500">No Items Found</h2>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems.map((item) => (
-              <MenuCard
-                key={item.id}
-                id={item.id}
-                name={item.name}
-                description={item.description}
-                price={item.price}
-                image={`${BASE_URL}${item.image}`}
-                onAddToCart={() => handleAddToCart(item)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {visibleItems.map((item) => (
+                <MenuCard
+                  key={item.id}
+                  id={item.id}
+                  name={item.name}
+                  description={item.description}
+                  price={item.price}
+                  image={`${BASE_URL}${item.image}`}
+                  onAddToCart={() => handleAddToCart(item)}
+                />
+              ))}
+            </div>
+
+            {/* ✅ View More Button */}
+            {hasMore && (
+              <div className="flex justify-center mt-10">
+                <button
+                  onClick={handleLoadMore}
+                  className="px-8 py-3 bg-[#FC8A06] text-white rounded-full font-semibold hover:bg-orange-600 transition"
+                >
+                  View More ({filteredItems.length - visibleCount} remaining)
+                </button>
+              </div>
+            )}
+
+            {/* ✅ Show All Button (when all items are loaded) */}
+            {!hasMore && visibleCount > 6 && (
+              <div className="text-center mt-6">
+                <p className="text-gray-500 text-sm">
+                  All {filteredItems.length} items loaded
+                </p>
+              </div>
+            )}
+          </>
         )}
       </section>
 
