@@ -9,16 +9,13 @@ import { useDispatch } from "react-redux";
 
 const Login = () => {
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -41,8 +38,7 @@ const Login = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log("API Response:", data);
-      console.log("User Data:", data.data);
+
       if (res.ok) {
         localStorage.setItem("accessToken", data.token.access);
         localStorage.setItem("refreshToken", data.token.refresh);
@@ -50,7 +46,6 @@ const Login = () => {
         localStorage.setItem("isLoggedIn", "true");
 
         dispatch(loginSuccess(data.data));
-        console.log("Saved in Redux:", data.data);
 
         toast.success(data.message || "Login Successful");
         if (data.data.is_admin) {
@@ -72,10 +67,8 @@ const Login = () => {
   return (
     <section className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* Left Side */}
-
+        {/* ✅ Left Side - Branding (Logo + Welcome Text) */}
         <div className="hidden lg:flex bg-[#03081F] text-white flex-col justify-center items-center p-12">
-          <h1>Login</h1>
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
 
           <h1 className="text-5xl font-bold text-center leading-tight">
@@ -91,8 +84,7 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Right Side */}
-
+        {/* ✅ Right Side - Login Form */}
         <div className="p-8 sm:p-12">
           <div className="lg:hidden flex justify-center mb-8">
             <img src={Logo} alt="Logo" className="h-14" />
@@ -106,12 +98,9 @@ const Login = () => {
 
           <form onSubmit={handleLogin}>
             {/* Email */}
-
             <label className="font-medium">Email Address</label>
-
             <div className="flex items-center border rounded-xl px-4 h-14 mt-2">
               <FaEnvelope className="text-gray-400" />
-
               <input
                 type="email"
                 name="email"
@@ -124,12 +113,9 @@ const Login = () => {
             </div>
 
             {/* Password */}
-
             <label className="font-medium block mt-5">Password</label>
-
             <div className="flex items-center border rounded-xl px-4 h-14 mt-2">
               <FaLock className="text-gray-400" />
-
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -139,7 +125,6 @@ const Login = () => {
                 className="flex-1 outline-none px-3"
                 required
               />
-
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -148,21 +133,18 @@ const Login = () => {
               </button>
             </div>
 
-            {/* Remember */}
-
+            {/* Remember & Forgot Password */}
             <div className="flex justify-between items-center mt-5 text-sm">
               <label className="flex items-center gap-2">
                 <input type="checkbox" />
                 Remember me
               </label>
-
               <button type="button" className="text-[#FC8A06]">
                 Forgot Password?
               </button>
             </div>
 
             {/* Login Button */}
-
             <button
               type="submit"
               disabled={loading}
@@ -173,17 +155,13 @@ const Login = () => {
           </form>
 
           {/* Divider */}
-
           <div className="flex items-center my-8">
             <div className="flex-1 h-px bg-gray-300"></div>
-
             <span className="px-4 text-gray-400">OR</span>
-
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Signup */}
-
+          {/* Signup Link */}
           <p className="text-center text-gray-600">
             Don't have an account?{" "}
             <Link to="/signup" className="text-[#FC8A06] font-semibold">
