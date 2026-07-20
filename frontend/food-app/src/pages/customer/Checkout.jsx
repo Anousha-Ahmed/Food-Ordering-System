@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FaShoppingCart } from "react-icons/fa";
-import { MdCheckCircle } from "react-icons/md";
 import TopBar from "../../components/layout/Topbar";
 import Navbar from "../../components/layout/Navbar";
 import { toast } from "react-toastify";
@@ -179,9 +177,9 @@ const Checkout = () => {
                         <h3 className="font-bold text-sm sm:text-base truncate">
                           {item.name}
                         </h3>
-                        <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full inline-block mt-1">
+                        {/* <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full inline-block mt-1">
                           {item.type || "Food"}
-                        </span>
+                        </span> */}
                         <h4 className="font-bold mt-2 text-sm sm:text-base">
                           £{item.price}
                         </h4>
