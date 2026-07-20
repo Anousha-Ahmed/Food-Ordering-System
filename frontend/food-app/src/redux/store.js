@@ -4,17 +4,23 @@ import storage from "redux-persist/lib/storage";
 import cartReducer from './slices/cartSlice';
 import authReducer from './slices/authSlice';
 
+// ✅ Debug - Check storage methods
+console.log("Storage object:", storage);
+console.log("Storage getItem:", typeof storage.getItem);
+console.log("Storage setItem:", typeof storage.setItem);
+console.log("Storage removeItem:", typeof storage.removeItem);
+
 // ✅ Persist Config
 const persistConfig = {
   key: "root",
-  storage, 
+  storage: storage,
   whitelist: ["auth", "cart"],
 };
 
 // ✅ Auth Persist Config
 const authPersistConfig = {
   key: "auth",
-  storage, 
+  storage: storage,
   whitelist: ["user"],
 };
 
