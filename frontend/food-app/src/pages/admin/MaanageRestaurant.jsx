@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API, BASE_URL } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import { useData } from "../../context/DataContext";
+import Loader from "../../components/common/Loader"; 
 
 const emptyForm = {
   name: "",
@@ -14,7 +15,6 @@ const emptyForm = {
 
 const ManageRestaurants = () => {
   const { restaurants, restaurantsLoading, refreshData } = useData();
-  
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -23,17 +23,11 @@ const ManageRestaurants = () => {
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleImage = (e) => {
-    setForm({
-      ...form,
-      image: e.target.files[0],
-    });
+    setForm({ ...form, image: e.target.files[0] });
   };
 
   const saveRestaurant = async () => {
@@ -45,24 +39,17 @@ const ManageRestaurants = () => {
       formData.append("address", form.address);
       formData.append("is_featured", form.is_featured);
       formData.append("is_active", form.is_active);
-
-      if (form.image) {
-        formData.append("image", form.image);
-      }
+      if (form.image) formData.append("image", form.image);
 
       const response = await fetch(
         editingId ? API.UPDATE_RESTAURANT(editingId) : API.CREATE_RESTAURANT,
         {
           method: editingId ? "PATCH" : "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         }
       );
-
       const data = await response.json();
-
       if (response.ok) {
         toast.success(editingId ? "Restaurant Updated" : "Restaurant Added");
         setEditingId(null);
@@ -93,15 +80,11 @@ const ManageRestaurants = () => {
 
   const deleteRestaurant = async (id) => {
     if (!window.confirm("Delete Restaurant?")) return;
-
     try {
       const response = await fetch(API.DELETE_RESTAURANT(id), {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         toast.success("Restaurant Deleted");
         refreshData();
@@ -111,20 +94,9 @@ const ManageRestaurants = () => {
     }
   };
 
-  // ✅ Loading State - Jab tak data load ho raha ho
+  // ✅ Loader
   if (restaurantsLoading) {
-    return (
-      <div className="p-4 sm:p-5 lg:p-8">
-        <div className="flex flex-col justify-center items-center h-96">
-          {/* Spinner */}
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
-          <p className="mt-6 text-gray-600 text-lg font-medium">
-            Loading Restaurants...
-          </p>
-          <p className="text-gray-400 text-sm">Please wait</p>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -136,7 +108,6 @@ const ManageRestaurants = () => {
         </span>
       </h1>
 
-      {/* FORM */}
       <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <input
@@ -147,7 +118,6 @@ const ManageRestaurants = () => {
             onChange={handleChange}
             className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <input
             type="text"
             name="address"
@@ -156,7 +126,6 @@ const ManageRestaurants = () => {
             onChange={handleChange}
             className="border rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <textarea
             rows={4}
             name="description"
@@ -165,13 +134,11 @@ const ManageRestaurants = () => {
             onChange={handleChange}
             className="border rounded-lg p-3 lg:col-span-2 w-full focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <input
             type="file"
             onChange={handleImage}
             className="border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <div className="flex flex-col sm:flex-row gap-5 sm:items-center">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -183,7 +150,6 @@ const ManageRestaurants = () => {
               />
               Featured
             </label>
-
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -196,24 +162,24 @@ const ManageRestaurants = () => {
             </label>
           </div>
         </div>
-
         <button
           onClick={saveRestaurant}
           disabled={saving}
           className="mt-6 bg-[#FC8A06] hover:bg-orange-600 transition text-white rounded-lg px-6 py-3 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? (
-            <>
-              <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
-              {editingId ? "Updating..." : "Adding..."}
-            </>
-          ) : (
-            editingId ? "Update Restaurant" : "Add Restaurant"
-          )}
+            <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+          ) : null}
+          {saving
+            ? editingId
+              ? "Updating..."
+              : "Adding..."
+            : editingId
+            ? "Update Restaurant"
+            : "Add Restaurant"}
         </button>
       </div>
 
-      {/* TABLE */}
       <div className="hidden lg:block bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full">
           <thead className="bg-[#FC8A06] text-white">
@@ -226,7 +192,6 @@ const ManageRestaurants = () => {
               <th>Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {restaurants.length === 0 ? (
               <tr>
@@ -238,7 +203,10 @@ const ManageRestaurants = () => {
               restaurants
                 .sort((a, b) => a.id - b.id)
                 .map((restaurant) => (
-                  <tr key={restaurant.id} className="border-b hover:bg-gray-50 transition">
+                  <tr
+                    key={restaurant.id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
                     <td className="py-3 flex justify-center">
                       {restaurant.image ? (
                         <img
@@ -250,7 +218,6 @@ const ManageRestaurants = () => {
                         "No Image"
                       )}
                     </td>
-
                     <td className="text-center">{restaurant.name}</td>
                     <td className="text-center">{restaurant.address}</td>
                     <td className="text-center">
@@ -259,7 +226,6 @@ const ManageRestaurants = () => {
                     <td className="text-center">
                       {restaurant.is_active ? "Active" : "Inactive"}
                     </td>
-
                     <td className="text-center">
                       <button
                         onClick={() => editRestaurant(restaurant)}
@@ -267,7 +233,6 @@ const ManageRestaurants = () => {
                       >
                         Edit
                       </button>
-
                       <button
                         onClick={() => deleteRestaurant(restaurant.id)}
                         className="bg-red-500 hover:bg-red-600 transition text-white px-3 py-2 rounded"
@@ -282,7 +247,6 @@ const ManageRestaurants = () => {
         </table>
       </div>
 
-      {/* Mobile Cards */}
       <div className="lg:hidden space-y-5">
         {restaurants.map((restaurant) => (
           <div key={restaurant.id} className="bg-white rounded-xl shadow p-4">
@@ -293,10 +257,8 @@ const ManageRestaurants = () => {
                 className="w-full h-48 rounded-lg object-cover mb-4"
               />
             )}
-
             <h2 className="text-xl font-bold">{restaurant.name}</h2>
             <p className="text-gray-500 mt-2">{restaurant.address}</p>
-
             <div className="mt-3 space-y-2">
               <p>
                 <b>Featured:</b> {restaurant.is_featured ? "Yes" : "No"}
@@ -305,7 +267,6 @@ const ManageRestaurants = () => {
                 <b>Status:</b> {restaurant.is_active ? "Active" : "Inactive"}
               </p>
             </div>
-
             <div className="flex gap-3 mt-5">
               <button
                 onClick={() => editRestaurant(restaurant)}
@@ -313,7 +274,6 @@ const ManageRestaurants = () => {
               >
                 Edit
               </button>
-
               <button
                 onClick={() => deleteRestaurant(restaurant.id)}
                 className="flex-1 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded"

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import { useData } from "../../context/DataContext";
+import Loader from "../../components/common/Loader";
 
 const emptyForm = {
   name: "",
@@ -12,8 +13,8 @@ const emptyForm = {
 };
 
 const ManageMenu = () => {
-  const { menuItems, menuLoading, restaurants, categories, refreshData } = useData();
-  
+  const { menuItems, menuLoading, restaurants, categories, refreshData } =
+    useData();
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -21,24 +22,23 @@ const ManageMenu = () => {
   const token = localStorage.getItem("accessToken");
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const saveMenu = async () => {
-    if (!form.name.trim() || !form.price || !form.restaurant || !form.category) {
+    if (
+      !form.name.trim() ||
+      !form.price ||
+      !form.restaurant ||
+      !form.category
+    ) {
       toast.error("Please fill all required fields");
       return;
     }
-
     setLoading(true);
-
     try {
       const url = editingId ? API.UPDATE_MENU(editingId) : API.CREATE_MENU;
       const method = editingId ? "PUT" : "POST";
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -47,9 +47,7 @@ const ManageMenu = () => {
         },
         body: JSON.stringify(form),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         toast.success(editingId ? "Menu Updated" : "Menu Created");
         setEditingId(null);
@@ -75,23 +73,16 @@ const ManageMenu = () => {
       restaurant: item.restaurant?.id || "",
       category: item.category?.id || "",
     });
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const deleteMenu = async (id) => {
     if (!window.confirm("Delete Menu Item?")) return;
-
     try {
       const response = await fetch(API.DELETE_MENU(id), {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         toast.success("Menu Deleted");
         refreshData();
@@ -104,19 +95,9 @@ const ManageMenu = () => {
     }
   };
 
-  // ✅ Loading State
+  // ✅ Loader
   if (menuLoading) {
-    return (
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
-          <p className="mt-6 text-gray-600 text-lg font-medium">
-            Loading Menu Items...
-          </p>
-          <p className="text-gray-400 text-sm">Please wait</p>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -128,7 +109,6 @@ const ManageMenu = () => {
         </span>
       </h1>
 
-      {/* FORM */}
       <div className="bg-white p-4 sm:p-6 rounded-xl shadow mb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <input
@@ -138,7 +118,6 @@ const ManageMenu = () => {
             onChange={handleChange}
             className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <input
             placeholder="Price *"
             name="price"
@@ -148,7 +127,6 @@ const ManageMenu = () => {
             onChange={handleChange}
             className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <textarea
             placeholder="Description"
             name="description"
@@ -157,7 +135,6 @@ const ManageMenu = () => {
             className="border p-3 rounded-lg col-span-1 sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
             rows="3"
           />
-
           <select
             name="restaurant"
             value={form.restaurant}
@@ -171,7 +148,6 @@ const ManageMenu = () => {
               </option>
             ))}
           </select>
-
           <select
             name="category"
             value={form.category}
@@ -186,22 +162,16 @@ const ManageMenu = () => {
             ))}
           </select>
         </div>
-
         <button
           onClick={saveMenu}
           disabled={loading}
           className="w-full sm:w-auto mt-4 bg-[#FC8A06] hover:bg-orange-600 transition text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
-            <>
-              <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
-              Saving...
-            </>
-          ) : (
-            editingId ? "Update Menu" : "Add Menu"
-          )}
+            <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+          ) : null}
+          {loading ? "Saving..." : editingId ? "Update Menu" : "Add Menu"}
         </button>
-
         {editingId && (
           <button
             onClick={() => {
@@ -215,7 +185,6 @@ const ManageMenu = () => {
         )}
       </div>
 
-      {/* TABLE */}
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full min-w-[600px]">
           <thead className="bg-[#FC8A06] text-white">
@@ -227,7 +196,6 @@ const ManageMenu = () => {
               <th className="py-3 px-3 text-center text-sm">Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {menuItems.length === 0 ? (
               <tr>
@@ -237,7 +205,10 @@ const ManageMenu = () => {
               </tr>
             ) : (
               menuItems.map((item) => (
-                <tr key={item.id} className="border-b hover:bg-gray-50 transition">
+                <tr
+                  key={item.id}
+                  className="border-b hover:bg-gray-50 transition"
+                >
                   <td className="py-3 px-3 font-medium">{item.name}</td>
                   <td className="py-3 px-3">{item.restaurant?.name || "-"}</td>
                   <td className="py-3 px-3">{item.category?.name || "-"}</td>
@@ -245,20 +216,18 @@ const ManageMenu = () => {
                     £{item.price}
                   </td>
                   <td className="py-3 px-3">
-                    <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
-                      <button
-                        onClick={() => editMenu(item)}
-                        className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 transition text-white py-2 rounded-lg text-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteMenu(item.id)}
-                        className="w-20 sm:w-24 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded-lg text-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => editMenu(item)}
+                      className="bg-blue-500 hover:bg-blue-600 transition text-white px-3 py-2 rounded mr-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteMenu(item.id)}
+                      className="bg-red-500 hover:bg-red-600 transition text-white px-3 py-2 rounded"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))

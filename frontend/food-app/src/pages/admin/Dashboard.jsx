@@ -3,6 +3,7 @@ import { API } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import RestaurantRevenueChart from "../../components/admin/RestaurantRevenueChart";
 import OverTimeRevenueChart from "../../components/admin/OvertimeRevenueChart";
+import Loader from "../../components/common/Loader"; 
 
 const Dashboard = () => {
   const [overview, setOverview] = useState({});
@@ -22,9 +23,7 @@ const Dashboard = () => {
   const loadAnalytics = async () => {
     setLoading(true);
     try {
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
+      const headers = { Authorization: `Bearer ${token}` };
 
       const [
         overviewRes,
@@ -63,51 +62,45 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Loading State for Dashboard
+  // ✅ Loader
   if (loading) {
-    return (
-      <div className="flex flex-col justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
-        <p className="mt-6 text-gray-600 text-lg font-medium">
-          Loading Dashboard...
-        </p>
-        <p className="text-gray-400 text-sm">Please wait</p>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
     <div className="space-y-8">
-      {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         <div className="bg-white shadow rounded-xl p-6">
           <h3>Total Orders</h3>
           <h1 className="text-3xl font-bold">{overview.total_orders || 0}</h1>
         </div>
-
         <div className="bg-white shadow rounded-xl p-6">
           <h3>Total Revenue</h3>
           <h1 className="text-3xl font-bold">£{overview.total_revenue || 0}</h1>
         </div>
-
         <div className="bg-white shadow rounded-xl p-6">
           <h3>Restaurants</h3>
-          <h1 className="text-3xl font-bold">{overview.active_restaurants || 0}</h1>
+          <h1 className="text-3xl font-bold">
+            {overview.active_restaurants || 0}
+          </h1>
         </div>
-
         <div className="bg-white shadow rounded-xl p-6">
           <h3>Users</h3>
           <h1 className="text-3xl font-bold">{overview.total_users || 0}</h1>
         </div>
       </div>
 
-      {/* Order by status */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {orderStatus.length > 0 ? (
           orderStatus.map((item) => (
-            <div key={item.current_status} className="bg-white shadow rounded-xl p-6">
+            <div
+              key={item.current_status}
+              className="bg-white shadow rounded-xl p-6"
+            >
               <h3 className="capitalize">{item.current_status}</h3>
-              <h1 className="text-3xl font-bold text-[#FC8A06]">{item.count}</h1>
+              <h1 className="text-3xl font-bold text-[#FC8A06]">
+                {item.count}
+              </h1>
             </div>
           ))
         ) : (
@@ -117,16 +110,20 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* Popular Items */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <div className="bg-white shadow rounded-xl p-6">
           <h2 className="text-xl font-bold mb-5">Popular Items</h2>
           {popularItems.length > 0 ? (
             popularItems.map((item) => (
-              <div key={item.menu_item__id} className="flex flex-col sm:flex-row sm:justify-between gap-2 border-b py-3">
+              <div
+                key={item.menu_item__id}
+                className="flex flex-col sm:flex-row sm:justify-between gap-2 border-b py-3"
+              >
                 <div>
                   <h3 className="font-semibold">{item.menu_item__name}</h3>
-                  <p className="text-gray-500">{item.menu_item__restaurant_id__name}</p>
+                  <p className="text-gray-500">
+                    {item.menu_item__restaurant_id__name}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p>Sold : {item.total_sold}</p>
@@ -135,19 +132,25 @@ const Dashboard = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-8">No popular items data</p>
+            <p className="text-gray-500 text-center py-8">
+              No popular items data
+            </p>
           )}
         </div>
 
-        {/* Popular Deals */}
         <div className="bg-white shadow rounded-xl p-6">
           <h2 className="text-xl font-bold mb-5">Popular Deals</h2>
           {popularDeals.length > 0 ? (
             popularDeals.map((deal) => (
-              <div key={deal.deal__id} className="flex flex-col sm:flex-row sm:justify-between gap-2 border-b py-3">
+              <div
+                key={deal.deal__id}
+                className="flex flex-col sm:flex-row sm:justify-between gap-2 border-b py-3"
+              >
                 <div>
                   <h3 className="font-semibold">{deal.deal__name}</h3>
-                  <p className="text-gray-500">{deal.deal__restaurant_id__name}</p>
+                  <p className="text-gray-500">
+                    {deal.deal__restaurant_id__name}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p>Sold : {deal.total_sold}</p>
@@ -156,7 +159,9 @@ const Dashboard = () => {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-8">No popular deals data</p>
+            <p className="text-gray-500 text-center py-8">
+              No popular deals data
+            </p>
           )}
         </div>
       </div>

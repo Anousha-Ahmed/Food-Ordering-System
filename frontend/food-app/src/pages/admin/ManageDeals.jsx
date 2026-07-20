@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API, BASE_URL } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import { useData } from "../../context/DataContext";
+import Loader from "../../components/common/Loader";
 
 const emptyForm = {
   restaurant_id: "",
@@ -15,7 +16,6 @@ const emptyForm = {
 
 const ManageDeals = () => {
   const { deals, dealsLoading, restaurants, refreshData } = useData();
-  
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -24,17 +24,11 @@ const ManageDeals = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleImage = (e) => {
-    setForm({
-      ...form,
-      image: e.target.files[0],
-    });
+    setForm({ ...form, image: e.target.files[0] });
   };
 
   const saveDeal = async () => {
@@ -42,9 +36,7 @@ const ManageDeals = () => {
       toast.error("Please fill all required fields");
       return;
     }
-
     setLoading(true);
-
     try {
       const formData = new FormData();
       formData.append("restaurant_id", form.restaurant_id);
@@ -53,24 +45,17 @@ const ManageDeals = () => {
       formData.append("combo_price", form.combo_price);
       formData.append("is_active", form.is_active);
       formData.append("is_featured", form.is_featured);
-
-      if (form.image) {
-        formData.append("image", form.image);
-      }
+      if (form.image) formData.append("image", form.image);
 
       const response = await fetch(
         editingId ? API.UPDATE_DEAL(editingId) : API.CREATE_DEAL,
         {
           method: editingId ? "PATCH" : "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         }
       );
-
       const data = await response.json();
-
       if (response.ok) {
         toast.success(editingId ? "Deal Updated" : "Deal Created");
         setEditingId(null);
@@ -98,23 +83,16 @@ const ManageDeals = () => {
       is_active: deal.is_active,
       is_featured: deal.is_featured,
     });
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const deleteDeal = async (id) => {
     if (!window.confirm("Delete Deal?")) return;
-
     try {
       const response = await fetch(API.DELETE_DEAL(id), {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         toast.success("Deal Deleted");
         refreshData();
@@ -127,19 +105,9 @@ const ManageDeals = () => {
     }
   };
 
-  // ✅ Loading State
+  // ✅ Loader
   if (dealsLoading) {
-    return (
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
-          <p className="mt-6 text-gray-600 text-lg font-medium">
-            Loading Deals...
-          </p>
-          <p className="text-gray-400 text-sm">Please wait</p>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -151,7 +119,6 @@ const ManageDeals = () => {
         </span>
       </h1>
 
-      {/* FORM */}
       <div className="bg-white rounded-xl shadow p-4 sm:p-6 mb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <select
@@ -167,7 +134,6 @@ const ManageDeals = () => {
               </option>
             ))}
           </select>
-
           <input
             type="text"
             name="name"
@@ -176,7 +142,6 @@ const ManageDeals = () => {
             onChange={handleChange}
             className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <input
             type="number"
             step="0.01"
@@ -186,13 +151,11 @@ const ManageDeals = () => {
             onChange={handleChange}
             className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <input
             type="file"
             onChange={handleImage}
             className="border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FC8A06] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[#FC8A06] file:text-white hover:file:bg-orange-600"
           />
-
           <textarea
             rows={3}
             name="description"
@@ -201,7 +164,6 @@ const ManageDeals = () => {
             onChange={handleChange}
             className="border rounded-lg p-3 col-span-1 sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <div className="flex flex-wrap gap-4 sm:gap-8 col-span-1 sm:col-span-2">
             <label className="flex gap-2 items-center cursor-pointer">
               <input
@@ -213,7 +175,6 @@ const ManageDeals = () => {
               />
               <span className="text-sm sm:text-base">Featured</span>
             </label>
-
             <label className="flex gap-2 items-center cursor-pointer">
               <input
                 type="checkbox"
@@ -226,7 +187,6 @@ const ManageDeals = () => {
             </label>
           </div>
         </div>
-
         <div className="flex flex-col sm:flex-row gap-3 mt-4">
           <button
             onClick={saveDeal}
@@ -234,15 +194,10 @@ const ManageDeals = () => {
             className="w-full sm:w-auto bg-[#FC8A06] hover:bg-orange-600 transition text-white px-8 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <>
-                <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
-                Saving...
-              </>
-            ) : (
-              editingId ? "Update Deal" : "Create Deal"
-            )}
+              <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+            ) : null}
+            {loading ? "Saving..." : editingId ? "Update Deal" : "Create Deal"}
           </button>
-
           {editingId && (
             <button
               onClick={() => {
@@ -257,7 +212,6 @@ const ManageDeals = () => {
         </div>
       </div>
 
-      {/* TABLE */}
       <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="w-full min-w-[700px]">
           <thead className="bg-[#FC8A06] text-white">
@@ -270,7 +224,6 @@ const ManageDeals = () => {
               <th className="py-3 px-3 text-center text-sm">Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {deals.length === 0 ? (
               <tr>
@@ -280,7 +233,10 @@ const ManageDeals = () => {
               </tr>
             ) : (
               deals.map((deal) => (
-                <tr key={deal.id} className="border-b hover:bg-gray-50 transition">
+                <tr
+                  key={deal.id}
+                  className="border-b hover:bg-gray-50 transition"
+                >
                   <td className="py-3 px-3 text-center">
                     {deal.image ? (
                       <img
@@ -292,7 +248,6 @@ const ManageDeals = () => {
                       <span className="text-xs text-gray-400">No Image</span>
                     )}
                   </td>
-
                   <td className="py-3 px-3 font-medium">{deal.name}</td>
                   <td className="py-3 px-3 text-center font-semibold text-[#FC8A06]">
                     £{deal.combo_price}
@@ -320,20 +275,18 @@ const ManageDeals = () => {
                     )}
                   </td>
                   <td className="py-3 px-3">
-                    <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
-                      <button
-                        onClick={() => editDeal(deal)}
-                        className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 transition text-white py-2 rounded-lg text-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => deleteDeal(deal.id)}
-                        className="w-20 sm:w-24 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded-lg text-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => editDeal(deal)}
+                      className="bg-blue-500 hover:bg-blue-600 transition text-white px-3 py-2 rounded mr-2"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteDeal(deal.id)}
+                      className="bg-red-500 hover:bg-red-600 transition text-white px-3 py-2 rounded"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))

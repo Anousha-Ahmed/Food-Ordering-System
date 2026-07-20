@@ -2,14 +2,12 @@ import { useState } from "react";
 import { API } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import { useData } from "../../context/DataContext";
+import Loader from "../../components/common/Loader"; 
 
-const emptyForm = {
-  name: "",
-};
+const emptyForm = { name: "" };
 
 const ManageCategories = () => {
   const { categories, categoriesLoading, refreshData } = useData();
-  
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -17,10 +15,7 @@ const ManageCategories = () => {
   const token = localStorage.getItem("accessToken");
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const saveCategory = async () => {
@@ -28,16 +23,12 @@ const ManageCategories = () => {
       toast.error("Category name is required");
       return;
     }
-
     setLoading(true);
-
     try {
       const url = editingId
         ? API.UPDATE_CATEGORY(editingId)
         : API.CREATE_CATEGORY;
-
       const method = editingId ? "PUT" : "POST";
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -46,9 +37,7 @@ const ManageCategories = () => {
         },
         body: JSON.stringify(form),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         toast.success(editingId ? "Category Updated" : "Category Created");
         setEditingId(null);
@@ -67,26 +56,17 @@ const ManageCategories = () => {
 
   const editCategory = (category) => {
     setEditingId(category.id);
-    setForm({
-      name: category.name,
-    });
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    setForm({ name: category.name });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const deleteCategory = async (id) => {
     if (!window.confirm("Delete Category?")) return;
-
     try {
       const response = await fetch(API.DELETE_CATEGORY(id), {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.ok) {
         toast.success("Category Deleted");
         refreshData();
@@ -96,19 +76,9 @@ const ManageCategories = () => {
     }
   };
 
-  // ✅ Loading State
+  // ✅ Loader
   if (categoriesLoading) {
-    return (
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="flex flex-col justify-center items-center h-96">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#FC8A06]"></div>
-          <p className="mt-6 text-gray-600 text-lg font-medium">
-            Loading Categories...
-          </p>
-          <p className="text-gray-400 text-sm">Please wait</p>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   return (
@@ -120,7 +90,6 @@ const ManageCategories = () => {
         </span>
       </h1>
 
-      {/* FORM */}
       <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-8">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <input
@@ -131,25 +100,23 @@ const ManageCategories = () => {
             onChange={handleChange}
             className="flex-1 border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-[#FC8A06]"
           />
-
           <button
             onClick={saveCategory}
             disabled={loading}
             className="w-full sm:w-auto bg-[#FC8A06] hover:bg-orange-600 transition text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <>
-                <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
-                Saving...
-              </>
-            ) : (
-              editingId ? "Update Category" : "Add Category"
-            )}
+              <span className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+            ) : null}
+            {loading
+              ? "Saving..."
+              : editingId
+              ? "Update Category"
+              : "Add Category"}
           </button>
         </div>
       </div>
 
-      {/* TABLE */}
       <div className="bg-white rounded-xl shadow-lg overflow-x-auto">
         <table className="w-full min-w-[400px]">
           <thead className="bg-[#FC8A06] text-white">
@@ -159,7 +126,6 @@ const ManageCategories = () => {
               <th className="py-3 px-3 text-center text-sm">Actions</th>
             </tr>
           </thead>
-
           <tbody>
             {categories.length === 0 ? (
               <tr>
@@ -171,24 +137,27 @@ const ManageCategories = () => {
               categories
                 .sort((a, b) => a.id - b.id)
                 .map((category) => (
-                  <tr key={category.id} className="border-b hover:bg-gray-50 transition">
-                    <td className="text-center py-3 px-3 text-sm">{category.id}</td>
+                  <tr
+                    key={category.id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="text-center py-3 px-3 text-sm">
+                      {category.id}
+                    </td>
                     <td className="py-3 px-3">{category.name}</td>
                     <td className="py-3 px-3">
-                      <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
-                        <button
-                          onClick={() => editCategory(category)}
-                          className="w-20 sm:w-24 bg-blue-500 hover:bg-blue-600 transition text-white py-2 rounded-lg text-sm"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteCategory(category.id)}
-                          className="w-20 sm:w-24 bg-red-500 hover:bg-red-600 transition text-white py-2 rounded-lg text-sm"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => editCategory(category)}
+                        className="bg-blue-500 hover:bg-blue-600 transition text-white px-3 py-2 rounded mr-2"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => deleteCategory(category.id)}
+                        className="bg-red-500 hover:bg-red-600 transition text-white px-3 py-2 rounded"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))
