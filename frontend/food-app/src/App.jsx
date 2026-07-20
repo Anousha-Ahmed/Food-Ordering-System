@@ -18,12 +18,12 @@ import AdminProtectedRoute from "./pages/admin/AdminProtectedRoute";
 import AdminLayout from "./pages/admin/AdminLayout";
 import ManageOrders from "./pages/admin/ManageOrders";
 import ManageMenu from "./pages/admin/ManageMenu";
-// import Analytics from "./pages/admin/Analytics"
+
 import ManageCategories from "./pages/admin/ManageCategories"
 import CategoryRestaurant from "./components/layout/CategoryRestaurant";
 import ManageRestaurants from "./pages/admin/MaanageRestaurant";
 import ManageDeals from "./pages/admin/ManageDeals";
-// import MenuItemDetail from "./pages/customer/MenuItemDetail";
+
 
 
 const App = () => {
