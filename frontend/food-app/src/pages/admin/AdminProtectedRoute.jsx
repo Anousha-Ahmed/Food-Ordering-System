@@ -5,7 +5,7 @@ const AdminProtectedRoute = () => {
   const user = useSelector((state) => state.auth.user);
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   if (!user.is_admin) {
