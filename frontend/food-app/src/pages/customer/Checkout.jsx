@@ -180,7 +180,7 @@ const Checkout = () => {
                           {item.name}
                         </h3>
                         <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full inline-block mt-1">
-                          {item.type || "Food"}
+                          {item.category?.name || item.type || "Food"}
                         </span>
                         <h4 className="font-bold mt-2 text-sm sm:text-base">
                           £{item.price}

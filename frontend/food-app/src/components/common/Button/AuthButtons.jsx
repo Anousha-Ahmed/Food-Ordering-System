@@ -15,7 +15,7 @@ const AuthButtons = () => {
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
-    window.location.href = "/";
+    navigate("/");
   };
 
   if (!user) {
