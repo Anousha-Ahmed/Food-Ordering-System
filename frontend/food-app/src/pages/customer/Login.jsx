@@ -40,11 +40,11 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
+        // ✅ Sirf token localStorage mein
         localStorage.setItem("accessToken", data.token.access);
         localStorage.setItem("refreshToken", data.token.refresh);
-        localStorage.setItem("user", JSON.stringify(data.data));
-        localStorage.setItem("isLoggedIn", "true");
 
+        // ✅ User Redux mein save 
         dispatch(loginSuccess(data.data));
 
         toast.success(data.message || "Login Successful");
@@ -67,20 +67,16 @@ const Login = () => {
   return (
     <section className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* ✅ Left Side - Branding (Text White) */}
         <div className="hidden lg:flex bg-gradient-to-br from-[#FC8A06] to-[#e07a05] text-white flex-col justify-center items-center p-12">
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
-
           <h1 className="text-5xl font-bold text-center leading-tight text-white">
             Welcome Back
           </h1>
-
           <p className="text-center text-white/90 mt-4 leading-7 max-w-sm">
             Login to your account and enjoy fast ordering with Order.uk.
           </p>
         </div>
 
-        {/* Right Side - Login Form */}
         <div className="p-8 sm:p-12">
           <div className="lg:hidden flex justify-center mb-8">
             <img src={Logo} alt="Logo" className="h-14" />

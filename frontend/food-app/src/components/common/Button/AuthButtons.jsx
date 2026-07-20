@@ -10,12 +10,12 @@ const AuthButtons = () => {
   const user = useSelector((state) => state.auth.user);
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(logout()); 
+    
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-    localStorage.removeItem("isLoggedIn");
-    navigate("/");
+    
+    navigate("/")
   };
 
   if (!user) {
