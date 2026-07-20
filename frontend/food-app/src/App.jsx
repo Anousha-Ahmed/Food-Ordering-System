@@ -32,7 +32,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* ✅ RESTAURANT ROUTES - Public */}
+        {/* ✅ RESTAURANT ROUTES */}
         <Route
           path="/restaurants/category/:id"
           element={<CategoryRestaurant />}
@@ -42,16 +42,16 @@ const App = () => {
         <Route path="/offers" element={<SpecialOffer />} />
         <Route path="/offers/:id" element={<DealDetail />} />
 
+        {/* ✅ PAYMENT ROUTES */}
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-cancel" element={<PaymentCancel />} />
+
         {/* ✅ CUSTOMER PROTECTED ROUTES */}
         <Route element={<CustomerProtectedRoute />}>
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/orders/:id" element={<OrderDetail />} />
         </Route>
-
-        {/* ✅ PAYMENT ROUTES - Public */}
-        <Route path="/payment-success" element={<PaymentSuccess />} />
-        <Route path="/payment-cancel" element={<PaymentCancel />} />
 
         {/* ✅ ADMIN PROTECTED ROUTES */}
         <Route element={<AdminProtectedRoute />}>

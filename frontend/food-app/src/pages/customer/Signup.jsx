@@ -82,7 +82,7 @@ const Signup = () => {
           <h1 className="text-5xl font-bold text-center">
             Join
             <br />
-            Order.uk 🚀
+            Order.uk
           </h1>
 
           <p className="text-center text-orange-100 mt-6">

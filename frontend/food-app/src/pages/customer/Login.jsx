@@ -75,6 +75,7 @@ const Login = () => {
         {/* Left Side */}
 
         <div className="hidden lg:flex bg-[#03081F] text-white flex-col justify-center items-center p-12">
+          <h1>Login</h1>
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
 
           <h1 className="text-5xl font-bold text-center leading-tight">
