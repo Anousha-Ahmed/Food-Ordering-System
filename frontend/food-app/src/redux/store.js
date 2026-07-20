@@ -1,20 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; 
+import storage from "redux-persist/lib/storage";
 import cartReducer from './slices/cartSlice';
 import authReducer from './slices/authSlice';
 
 // ✅ Persist Config
 const persistConfig = {
   key: "root",
-  storage: storage, 
+  storage, 
   whitelist: ["auth", "cart"],
 };
 
 // ✅ Auth Persist Config
 const authPersistConfig = {
   key: "auth",
-  storage: storage, 
+  storage, 
   whitelist: ["user"],
 };
 
