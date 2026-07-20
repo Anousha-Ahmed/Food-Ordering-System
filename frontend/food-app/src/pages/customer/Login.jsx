@@ -67,15 +67,15 @@ const Login = () => {
   return (
     <section className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* ✅ Left Side - Branding (Clean & Professional) */}
-        <div className="hidden lg:flex bg-gradient-to-br from-[#FC8A06] to-[#FC8A06] text-white flex-col justify-center items-center p-12">
+        {/* ✅ Left Side - Branding (Text White) */}
+        <div className="hidden lg:flex bg-gradient-to-br from-[#FC8A06] to-[#e07a05] text-white flex-col justify-center items-center p-12">
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
 
-          <h1 className="text-5xl font-bold text-center leading-tight">
+          <h1 className="text-5xl font-bold text-center leading-tight text-white">
             Welcome Back
           </h1>
 
-          <p className="text-center text-gray-300 mt-4 leading-7 max-w-sm">
+          <p className="text-center text-white/90 mt-4 leading-7 max-w-sm">
             Login to your account and enjoy fast ordering with Order.uk.
           </p>
         </div>

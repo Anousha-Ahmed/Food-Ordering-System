@@ -68,15 +68,15 @@ const Signup = () => {
   return (
     <section className="min-h-screen bg-[#F8F8F8] flex items-center justify-center px-4 py-10">
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid lg:grid-cols-2">
-        {/* ✅ Left Side - Branding (Same as Login) */}
+        {/* ✅ Left Side - Branding (Text White) */}
         <div className="hidden lg:flex bg-gradient-to-br from-[#FC8A06] to-[#e07a05] text-white flex-col justify-center items-center p-12">
           <img src={Logo} alt="Logo" className="h-16 mb-10" />
 
-          <h1 className="text-5xl font-bold text-center leading-tight">
+          <h1 className="text-5xl font-bold text-center leading-tight text-white">
             Join Order.uk
           </h1>
 
-          <p className="text-center text-orange-100 mt-4 leading-7 max-w-sm">
+          <p className="text-center text-white/90 mt-4 leading-7 max-w-sm">
             Create your account and enjoy delicious food delivered to your door.
           </p>
         </div>
