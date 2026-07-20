@@ -3,7 +3,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import cartReducer from './slices/cartSlice';
 import authReducer from './slices/authSlice';
 
-// ✅ Manual Storage Object - Direct localStorage use karein
+// ✅ Manual Storage Object ]
 const storage = {
   getItem: (key) => {
     try {
@@ -34,10 +34,6 @@ const storage = {
   },
 };
 
-// ✅ Debug - Check storage methods
-console.log("Storage getItem:", typeof storage.getItem); // ✅ function aana chahiye
-console.log("Storage setItem:", typeof storage.setItem); // ✅ function aana chahiye
-console.log("Storage removeItem:", typeof storage.removeItem); // ✅ function aana chahiye
 
 // ✅ Persist Config
 const persistConfig = {
