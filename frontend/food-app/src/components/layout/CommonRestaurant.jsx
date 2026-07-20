@@ -2,37 +2,20 @@ import React from "react";
 import { BASE_URL } from "../../api/endpoints";
 import { useData } from "../../context/DataContext";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../components/common/Loader"; 
 
 const CommonRestaurant = () => {
   const { restaurants, restaurantsLoading } = useData();
   const navigate = useNavigate();
 
+  // ✅ Loader
   if (restaurantsLoading) {
-    return (
-      <section className="max-w-7xl mx-auto px-8 lg:px-0 py-8 mt-[20px]">
-        <h2 className="text-[32px] font-bold mb-8">
-          All Restaurants
-        </h2>
-
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-5">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="animate-pulse">
-              <div className="bg-gray-300 h-[150px] rounded-t-xl"></div>
-
-              <div className="bg-gray-300 h-[60px] rounded-b-xl mt-1"></div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
+    return <Loader />;
   }
 
   return (
     <section className="max-w-7xl mx-auto px-8 lg:px-0 py-8 mt-[20px]">
-      <h2 className="text-[32px] font-bold mb-8">
-        All Restaurants
-      </h2>
-
+      <h2 className="text-[32px] font-bold mb-8">All Restaurants</h2>
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-5">
         {restaurants.map((item) => (
           <div
@@ -49,12 +32,10 @@ const CommonRestaurant = () => {
               alt={item.name}
               className="w-full h-[150px] object-cover"
             />
-
             <div className="bg-[#FC8A06] py-3">
               <h3 className="text-center text-white font-semibold">
                 {item.name}
               </h3>
-
               <h3 className="text-center text-white font-semibold">
                 {item.address}
               </h3>
