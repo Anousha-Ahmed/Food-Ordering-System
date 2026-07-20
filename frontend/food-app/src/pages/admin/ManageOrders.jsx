@@ -86,7 +86,7 @@ const ManageOrders = () => {
         return "bg-blue-500";
       case "preparing":
         return "bg-purple-500";
-      case "out_for_delivery":
+      case "Out for Deleivery":
         return "bg-indigo-500";
       case "delivered":
         return "bg-green-600";
