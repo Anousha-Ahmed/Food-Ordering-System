@@ -3,7 +3,7 @@ import { API } from "../../api/endpoints";
 import { toast } from "react-toastify";
 import RestaurantRevenueChart from "../../components/admin/RestaurantRevenueChart";
 import OverTimeRevenueChart from "../../components/admin/OvertimeRevenueChart";
-import Loader from "../../components/common/Loader"; 
+import Loader from "../../components/common/Loader";
 
 const Dashboard = () => {
   const [overview, setOverview] = useState({});
@@ -62,6 +62,19 @@ const Dashboard = () => {
     }
   };
 
+
+  const getStatusDisplay = (status) => {
+    switch (status) {
+      case "pending": return "Pending";
+      case "accepted": return "Accepted";
+      case "preparing": return "Preparing";
+      case "out_for_delivery": return "Out for Delivery";
+      case "delivered": return "Delivered";
+      case "cancelled": return "Cancelled";
+      default: return status;
+    }
+  };
+
   // ✅ Loader
   if (loading) {
     return <Loader />;
@@ -90,6 +103,7 @@ const Dashboard = () => {
         </div>
       </div>
 
+      
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {orderStatus.length > 0 ? (
           orderStatus.map((item) => (
@@ -97,7 +111,9 @@ const Dashboard = () => {
               key={item.current_status}
               className="bg-white shadow rounded-xl p-6"
             >
-              <h3 className="capitalize">{item.current_status}</h3>
+              <h3 className="capitalize">
+                {getStatusDisplay(item.current_status)}
+              </h3>
               <h1 className="text-3xl font-bold text-[#FC8A06]">
                 {item.count}
               </h1>

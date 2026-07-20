@@ -1,91 +1,94 @@
-import React, { useState } from "react";
-import SidebarImg from "../../assets/RestaurantDetailImg/SidebarImg.png";
-import FirstOrderDiscount from '../../assets/RestaurantDetailImg/FirstOrderDiscount.png'
+import {
+  FaHome,
+  FaShoppingCart,
+  FaUtensils,
+  FaStore,
+  FaTags,
+  FaList,
+  FaTimes,
+} from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
-const menuItems = [
-  "Pizzas",
-  "Garlic Bread",
-  "Calzone",
-  "Kebabas",
-  "Salads",
-  "Cold drinks",
-  "Happy Meal®",
-  "Desserts",
-  "Hot drinks",
-  "Sauces",
-  "Orbit®",
-];
-
-const Discount = [
+const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
+  const menus = [
     {
-      id: 1,
-      image: FirstOrderDiscount,
+      title: "Dashboard",
+      path: "/dashboard",
+      icon: <FaHome />,
+    },
+    {
+      title: "Orders",
+      path: "/admin/orders",
+      icon: <FaShoppingCart />,
+    },
+    {
+      title: "Restaurants",
+      path: "/admin/restaurants",
+      icon: <FaStore />,
+    },
+    {
+      title: "Menu",
+      path: "/admin/menu",
+      icon: <FaUtensils />,
+    },
+    {
+      title: "Deals",
+      path: "/admin/deals",
+      icon: <FaTags />,
+    },
+    {
+      title: "Categories",
+      path: "/admin/categories",
+      icon: <FaList />,
     },
   ];
 
-const Sidebar = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
   return (
     <>
-    <div>
-    <div className="w-[280px] bg-white border border-[#D9D9D9] rounded-lg shadow-sm mx-[35px] ml-[4px]">
-
-      {/* Header */}
-      <div className="flex items-center gap-3 px-5 py-6 border-b border-gray-300">
-
-        <img
-          src={SidebarImg}
-          alt="Menu"
-          className="w-8 h-8"
+      {/* Overlay - Mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
         />
+      )}
 
-        <h2 className="text-[30px] font-bold text-[#03081F] py-[18px]">
-          Menu
-        </h2>
-
-      </div>
-
-      {/* Menu Items */}
-      <div>
-
-        {menuItems.map((item, index) => (
-
-          <button
-            key={index}
-            onClick={() => setActiveIndex(index)}
-            className={`w-full text-left px-5 py-4 text-[17px] font-bold transition-all duration-200
-            ${
-              activeIndex === index
-                ? "bg-[#03081F] text-white"
-                : "bg-white text-[#03081F] hover:bg-gray-50"
-            }`}
-          >
-            {item}
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 z-50 h-full w-72 bg-[#FC8A06] text-white shadow-lg transform transition-transform duration-300 overflow-y-auto
+          ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }`}
+      >
+        <div className="flex justify-between items-center px-6 py-6 border-b border-orange-300">
+          <h1 className="text-2xl font-bold">Food Admin</h1>
+          <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
+            <FaTimes size={22} />
           </button>
-
-        ))}
-
-      </div>
-    </div>
-
-
-    <div className="w-[320px] mx-[3px] my-[35px]">
-        <div>
-            {Discount.map((item) => (
-            <div key={item.id}>
-                <img
-                src={item.image}
-                className="w-full h-[220] object-cover rounded-xl"
-                />
-            </div>
-            ))}
         </div>
-    </div>
-</div>
 
-</>
-
+        <div className="mt-5 pb-10">
+          {menus.map((menu) => (
+            <NavLink
+              key={menu.title}
+              to={menu.path}
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-4 px-8 py-4
+                  ${
+                    isActive
+                      ? "bg-white text-[#FC8A06] font-bold"
+                      : "hover:bg-orange-500"
+                  }`
+              }
+            >
+              {menu.icon}
+              {menu.title}
+            </NavLink>
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 
