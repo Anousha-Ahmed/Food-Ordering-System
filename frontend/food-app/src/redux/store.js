@@ -1,14 +1,43 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import cartReducer from './slices/cartSlice';
 import authReducer from './slices/authSlice';
 
+// ✅ Manual Storage Object - Direct localStorage use karein
+const storage = {
+  getItem: (key) => {
+    try {
+      const value = localStorage.getItem(key);
+      return Promise.resolve(value ? JSON.parse(value) : null);
+    } catch (err) {
+      console.error("Error getting item:", err);
+      return Promise.resolve(null);
+    }
+  },
+  setItem: (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return Promise.resolve();
+    } catch (err) {
+      console.error("Error setting item:", err);
+      return Promise.resolve();
+    }
+  },
+  removeItem: (key) => {
+    try {
+      localStorage.removeItem(key);
+      return Promise.resolve();
+    } catch (err) {
+      console.error("Error removing item:", err);
+      return Promise.resolve();
+    }
+  },
+};
+
 // ✅ Debug - Check storage methods
-console.log("Storage object:", storage);
-console.log("Storage getItem:", typeof storage.getItem);
-console.log("Storage setItem:", typeof storage.setItem);
-console.log("Storage removeItem:", typeof storage.removeItem);
+console.log("Storage getItem:", typeof storage.getItem); // ✅ function aana chahiye
+console.log("Storage setItem:", typeof storage.setItem); // ✅ function aana chahiye
+console.log("Storage removeItem:", typeof storage.removeItem); // ✅ function aana chahiye
 
 // ✅ Persist Config
 const persistConfig = {
