@@ -44,12 +44,23 @@ ALLOWED_HOSTS = os.getenv(
 ).split(",")
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ALLOWED_ORIGINS = [
-    os.getenv("FRONTEND_URL", "http://localhost:3000","http://localhost:5173"),
-]
+# CORS_ALLOWED_ORIGINS = [
+#     os.getenv("FRONTEND_URL", "http://localhost:3000","http://localhost:5173"),
+# ]
 USE_X_FORWARDED_HOST = True
+# CSRF_TRUSTED_ORIGINS = [
+#     os.getenv("FRONTEND_URL", "http://localhost:3000","http://localhost:5173"),
+# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",                  # Next.js local
+    "http://localhost:5173",                  # React local (agar kabhi use karo)
+    "https://food-ordering-system-blue.vercel.app",  # Production frontend
+]
+
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("FRONTEND_URL", "http://localhost:3000","http://localhost:5173"),
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://food-ordering-system-blue.vercel.app",
 ]
 
 
