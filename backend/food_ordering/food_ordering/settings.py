@@ -22,7 +22,8 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+# 5173
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -44,11 +45,11 @@ ALLOWED_HOSTS = os.getenv(
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    os.getenv("FRONTEND_URL", "http://localhost:5173"),
+    os.getenv("FRONTEND_URL", "http://localhost:3000","http://localhost:5173"),
 ]
 USE_X_FORWARDED_HOST = True
 CSRF_TRUSTED_ORIGINS = [
-    os.getenv("FRONTEND_URL", "http://localhost:5173"),
+    os.getenv("FRONTEND_URL", "http://localhost:3000","http://localhost:5173"),
 ]
 
 
