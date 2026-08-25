@@ -1,4 +1,5 @@
-export const BASE_URL = "https://food-ordering-system-production-2c87.up.railway.app";
+// export const BASE_URL = "https://food-ordering-system-production-2c87.up.railway.app";
+export const BASE_URL = "https://anoushaahmed.pythonanywhere.com";
 
 export const API = {
   // Authentication
