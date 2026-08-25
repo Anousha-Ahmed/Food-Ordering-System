@@ -40,7 +40,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "127.0.0.1,localhost,food-ordering-system-production-2c87.up.railway.app"
+    "127.0.0.1,localhost,food-ordering-system-production-2c87.up.railway.app,'.pythonanywhere.com','anoushaahmed.pythonanywhere.com',"
 ).split(",")
 CORS_ALLOW_ALL_ORIGINS = False
 
@@ -61,6 +61,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     "https://food-ordering-system-blue.vercel.app",
+    'https://anoushaahmed.pythonanywhere.com',
 ]
 
 
