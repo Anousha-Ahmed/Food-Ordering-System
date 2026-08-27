@@ -40,11 +40,11 @@ const DownloadApp = () => {
           alt="people"
           className="h-full object-contain absolute bottom-[20px] right-[60px]"
         />
-        <img
+        {/* <img
           src={People}
           alt="people"
           className="h-full object-contain absolute bottom-[20px] right-[80px] opacity-[15%]"
-        />
+        /> */}
       </div>
 
       {/* Right Content */}
