@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -48,10 +49,11 @@ const Login = () => {
         dispatch(loginSuccess(data.data));
 
         toast.success(data.message || "Login Successful");
+        const from = location.state?.from?.pathname || "/";
         if (data.data.is_admin) {
           navigate("/dashboard");
         } else {
-          navigate("/");
+          navigate(from);
         }
       } else {
         toast.error(data.error || data.message || "Invalid Email or Password");
